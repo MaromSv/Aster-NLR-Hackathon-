@@ -1,4 +1,4 @@
-from data import get_data_fast
+from data import get_star_data_df
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,7 +12,7 @@ def get_values(coord):
 
 class StarData:
     def __init__(self):
-        stars = get_data_fast()
+        stars = get_star_data_df()
 
         series = stars.coord.apply(get_values)
         self.positions = np.array(series.tolist())
@@ -79,8 +79,7 @@ class StarData:
         plt.show()
 
 
-# Create an instance of the StarData class
-star_data = StarData()
 
-# Draw the canvas to visualize the star data
-star_data.draw_canvas()
+# star_data = StarData()
+
+# star_data.draw_canvas()
