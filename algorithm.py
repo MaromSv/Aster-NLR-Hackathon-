@@ -15,6 +15,20 @@ def getUserInput():
     user_vertices = np.array(
         [(1, 1), (3, 3), (5, 1), (4, 1), (4, -2), (2, -2), (2, 1)])
 
+    # user_edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5),
+    #               (5, 6), (6, 7), (7, 8), (8, 9), (9, 0)]
+
+    # user_vertices = np.array([(31, -95),
+    #                           (-31, -95),
+    #                           (-81, -59),
+    #                           (-100, 0),
+    #                           (-81, 59),
+    #                           (-31, 95),
+    #                           (31, 95),
+    #                           (81, 59),
+    #                           (100, 0),
+    #                           (81, -59)])
+
     return user_vertices, user_edges
 
 
@@ -50,7 +64,7 @@ def plotUserInput(user_vertices, user_edges):
 user_vertices, user_edges = getUserInput()
 # plotUserInput(user_vertices, user_edges)
 # # Generate random points
-num_points = 300
+num_points = 500
 np.random.seed(5)
 
 
@@ -62,9 +76,11 @@ coordinates = list(zip(x_values, y_values))
 tree = cKDTree(coordinates)
 
 
-threshold = 1
+threshold = 0.5
 
 coordinatePairs = combinations(coordinates, 2)
+
+best_length = float("inf")
 
 possible_constelations = []
 for coordates in coordinatePairs:
@@ -127,11 +143,14 @@ for coordates in coordinatePairs:
             break  # Point is too far away
         else:
             totalDistance += distance
+            if (totalDistance > best_length):
+                break
             possible_constelation.append(nearest_point)
 
         if counter == len(user_vertices) - 1:
             possible_constelations.append(
                 (possible_constelation, totalDistance))
+            best_length = totalDistance
 
 
 print(len(possible_constelations))
