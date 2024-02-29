@@ -8,10 +8,8 @@ from linalg import *
 def getUserInput():
     # Define the adjacency matrix of the user shape
 
-
     # Convert the adjacency matrix to edges
     user_edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
-
 
     # Define the vertices of the user shape
     user_vertices = np.array([(1, 1), (1, 2), (2, 2), (2, 1)])
@@ -52,7 +50,7 @@ user_vertices, user_edges = getUserInput()
 
 # # Generate random points
 num_points = 50
-np.random.seed(10)
+np.random.seed(12)
 
 
 x_values = np.random.rand(num_points) * 10
@@ -79,14 +77,12 @@ for coordates in coordinatePairs:
 
     input_distances = getLengthsOfInput(user_vertices, user_edges)
     scale = distance / input_distances[0]  # Calculate the scale
-
+    rot_matrix = get_rotation(
+        user_vertices[1] - user_vertices[0], coord_second - coord_first, input_distances[0], distance)
     for i, vertex in enumerate(user_vertices[2:]):
         coord_first = coord_second
         counter = i + 2
-        rot_matrix = get_rotation(
-        user_vertices[1] - user_vertices[0], coord_second - coord_first, input_distances[0], distance)
 
-        
         # input space
         next_edge = user_vertices[counter] - user_vertices[counter - 1]
         const_edge = next_edge@rot_matrix * scale
@@ -96,12 +92,14 @@ for coordates in coordinatePairs:
         nearby_point_indices = tree.query_ball_point(centroid, threshold)
 
         # Get the nearby points
-        nearby_points = [np.array(coordinates[i]) for i in nearby_point_indices]
+        nearby_points = [np.array(coordinates[i])
+                         for i in nearby_point_indices]
 
-        #Compute their distances
-        distances = [euclideanDistance(point, centroid) for point in nearby_points]
+        # Compute their distances
+        distances = [euclideanDistance(point, centroid)
+                     for point in nearby_points]
 
-        #Sort the list
+        # Sort the list
         sorted_indices = np.argsort(distances)
         sorted_nearby_points = [nearby_points[i] for i in sorted_indices]
 
@@ -115,25 +113,24 @@ for coordates in coordinatePairs:
         # print("nearby point", new_sorted_nearby_points)
         if len(new_sorted_nearby_points) == 0:
             break
-        
+
         nearest_point = new_sorted_nearby_points[0]
         distance = euclideanDistance(nearest_point, centroid)
 
         if distance > threshold:
             break  # Point is too far away
-        else: 
+        else:
             possible_constelation.append(nearest_point)
             coord_second = np.array(nearest_point)
 
-        if counter == len(user_vertices) -1 :
+        if counter == len(user_vertices) - 1:
             possible_constelations.append(possible_constelation)
-        
 
 
 print(len(possible_constelations))
 print(possible_constelations)
 
-#TODO: Find best of the possible constelations
+# TODO: Find best of the possible constelations
 
 # # Find the closest match among the random points
 # best_match_distance = float('inf')
@@ -162,7 +159,7 @@ final_constellation = possible_constelations[0]
 print(final_constellation)
 
 rot_matrix = get_rotation(
-user_vertices[1] - user_vertices[0], final_constellation[1] - final_constellation[0], input_distances[0], distance)
+    user_vertices[1] - user_vertices[0], final_constellation[1] - final_constellation[0], input_distances[0], distance)
 
 
 # Extract coordinates from the data
@@ -179,9 +176,12 @@ y_constellation = [coord[1] for coord in constellation_coordinates]
 
 # Plot the closest match in a separate window
 plt.figure()
-plt.scatter(x_values, y_values, color='blue', marker='o', label='Random Points')
-plt.plot(x_constellation, y_constellation, color='green', linestyle='-', marker='o', label='Closest Match')
-plt.plot([x_constellation[0],x_constellation[1]], [y_constellation[0], y_constellation[1]], color='black',  label='First edge')
+plt.scatter(x_values, y_values, color='blue',
+            marker='o', label='Random Points')
+plt.plot(x_constellation, y_constellation, color='green',
+         linestyle='-', marker='o', label='Closest Match')
+plt.plot([x_constellation[0], x_constellation[1]], [
+         y_constellation[0], y_constellation[1]], color='black',  label='First edge')
 plt.title('Closest Match to User Shape')
 plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
