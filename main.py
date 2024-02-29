@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from dataclasses import dataclass
 from PIL import Image, ImageTk
+import numpy
 
 from starGeneratorGui import StarGenerator
 
@@ -114,6 +115,8 @@ class starScribbler:
         self.canvas.delete(self.canvasId-1)
         self.canvas.delete(self.canvasId)
         self.canvasId -= 2
+        self.edgesList.pop()
+        self.vertexList.pop()
 
     """
     Generate adjacency matrix and launches output window.
@@ -232,7 +235,6 @@ class Graph:
             distances.append(self.getDistance(vertex, Vertex(0, origin[0], origin[1])))
         
         return distances.index(min(distances))
-
 
 if __name__ == "__main__":        
     CTK_Window = starScribbler()

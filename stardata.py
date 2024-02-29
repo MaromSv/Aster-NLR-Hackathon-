@@ -71,7 +71,7 @@ class StarData:
         visible = result_df[in_frame]
 
         fig = Figure(figsize = (8, 6), dpi = 100)
-        ax = fig.add_subplot(111, projection)
+        ax = fig.add_subplot(111)
         ax.grid(True)
 
         # Using seaborn scatterplot
