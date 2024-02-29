@@ -1,4 +1,4 @@
-from data import get_star_data_df
+from data import get_data_fast
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -77,3 +77,10 @@ class StarData:
         sc = ax.scatter(x=visible['x'], y=visible['y'],
                         c="yellow", s=10, alpha=0.7)
         plt.show()
+
+
+# Create an instance of the StarData class
+star_data = StarData()
+
+# Draw the canvas to visualize the star data
+star_data.draw_canvas()
