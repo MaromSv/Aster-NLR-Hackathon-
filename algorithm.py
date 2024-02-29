@@ -7,17 +7,11 @@ from linalg import *
 
 def getUserInput():
     # Define the adjacency matrix of the user shape
-    user_adjacency = np.array([[0, 1, 0, 1],
-                               [1, 0, 1, 0],
-                               [0, 1, 0, 1],
-                               [1, 0, 1, 0]])
+
 
     # Convert the adjacency matrix to edges
-    user_edges = []
-    for i in range(len(user_adjacency)):
-        for j in range(i + 1, len(user_adjacency)):
-            if user_adjacency[i][j] == 1:
-                user_edges.append((i, j))
+    user_edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
+
 
     # Define the vertices of the user shape
     user_vertices = np.array([(1, 1), (1, 2), (2, 2), (2, 1)])
