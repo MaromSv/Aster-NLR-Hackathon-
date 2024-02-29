@@ -9,8 +9,8 @@ class StarGenerator(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         ctk.set_appearance_mode("dark")
         self.root = ctk.CTk()
-        self.root.geometry("1200x400+200x200")
-        self.root.title("Dynamic Scatterplot")
+        self.root.geometry("1200x800")
+        self.root.title("Star Scribbler")
         self.root.update()
         self.frame = ctk.CTkFrame(master=self.root,
                                   height= self.root.winfo_height()*0.95,
@@ -33,15 +33,7 @@ class StarGenerator(ctk.CTkToplevel):
                                     number_of_steps=999,
                                     command=self.update_surface)
         self.slider.place(relx= 0.025,rely=0.75) 
-        self.button = ctk.CTkButton(master = self.root,
-                               text="Update Graph",
-                               width=300,
-                               height=50,
-                               command=self.update_window)
-        self.button.place(relx=0.025,rely=0.25)
-        self.root.mainloop()
-    
-    def update_window(self):
+        self.root.update()
         data = StarData()
         fig = data.get_plot()
 
@@ -49,7 +41,8 @@ class StarGenerator(ctk.CTkToplevel):
         canvas.draw()
         canvas.get_tk_widget().place(relx=0.33, rely=0.025)
         self.root.update()
-        
+        self.root.mainloop()
+    
     def update_surface(self,other):
         fig, ax = plt.subplots()
         fig.set_size_inches(11,5.3)

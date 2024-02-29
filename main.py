@@ -1,9 +1,11 @@
 import customtkinter as ctk
 from tkinter import Canvas
+from tkinter import *
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from dataclasses import dataclass
+from PIL import Image, ImageTk
 
 from starGeneratorGui import StarGenerator
 
@@ -25,8 +27,8 @@ class starScribbler:
         self.root.title("Star Scribbler")
         self.root.update()
 
-        self.labelTitle = ctk.CTkLabel(master=self.root, text="stArtist", font=('TkDefaultFont', 80))
-        self.labelTitle.place(relx=0.4, rely=0)
+        self.labelTitle = ctk.CTkLabel(master=self.root, text="Star Scribbler", font=('TkDefaultFont', 80))
+        self.labelTitle.place(relx=0.3, rely=0)
 
         self.frame = ctk.CTkFrame(master=self.root,
                                   height= self.root.winfo_height()*0.9,
@@ -55,6 +57,21 @@ class starScribbler:
                                height=90,
                                command=self.generate)
         self.buttonGenerate.place(relx=0.77, rely=0.90)
+
+        logoAster = Image.open('./assets/asterLogo.png')
+        logoAster = logoAster.resize((75, 75))
+
+        logoGame = Image.open('./assets/SkyScribblerLogo.png')
+        logoGame = logoGame.resize((75, 75))
+
+        self.logoAster = ctk.CTkLabel(master=self.root, text="",
+                                       image = ImageTk.PhotoImage(logoAster))
+        self.logoAster.place(relx=0.9, rely=0.01)
+
+        self.logoGame = ctk.CTkLabel(master=self.root, text="",
+                                       image = ImageTk.PhotoImage(logoGame))
+        self.logoGame.place(relx=0.01, rely=0.01)
+
 
         self.canvas = ctk.CTkCanvas(master=self.frame, height= self.root.winfo_height()*0.775,
                                   width = self.root.winfo_width()*0.95)
