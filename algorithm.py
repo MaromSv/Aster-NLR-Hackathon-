@@ -69,8 +69,6 @@ coordinates = list(zip(x_values, y_values))
 tree = cKDTree(coordinates)
 
 
-# Define the target point and distance threshold
-target_point = (2, 5)
 threshold = 1  # Adjust as needed
 
 # Query the R-tree for points within the threshold distance of the target point
