@@ -11,12 +11,15 @@ class skyMatcher:
         self.origin = (0, 0)
         self.vertexList = []
         self.edgesList = []
+        self.dragBlock = False
 
-        ctk.set_appearance_mode("dark")
+        ctk.set_appearance_mode("System")
+        ctk.set_default_color_theme("blue")
         self.root = ctk.CTk()
-        self.root.attributes('-fullscreen', True)
+        self.root.geometry("1200x1000")
         self.root.title("Sky Matcher")
         self.root.update()
+
         self.frame = ctk.CTkFrame(master=self.root,
                                   height= self.root.winfo_height()*0.95,
                                   width = self.root.winfo_width()*0.66,
@@ -57,9 +60,9 @@ class skyMatcher:
         self.startEdge = True
         self.dragBlock = True
        
-       
+
     def drag(self, e):
-        if self.dragBlock == False:
+        if self.dragBlock == False and self.line is not None:
             self.canvas.coords(self.line, self.origin[0], self.origin[1], e.x, e.y)
 
 
