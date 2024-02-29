@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from dataclasses import dataclass
 
-class skyMatcher:
+from starGeneratorGui import StarGenerator
+
+class starScribbler:
         
     def __init__(self):
         self.origin = (0, 0)
@@ -14,6 +16,7 @@ class skyMatcher:
         self.dragBlock = False
         self.line = None
         self.canvasId = 0
+        self.toplevel_window = None
 
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
@@ -83,6 +86,16 @@ class skyMatcher:
         print(self.vertexList)
         print(self.edgesList)
 
+        self.toplevel_window = StarGenerator(self.root)
+        #data = StarData()
+        #data.draw_canvas()
+        """
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = ctk.CTkToplevel(self.root)  
+        else:
+            self.toplevel_window.focus()
+        """
+
     def rightClick(self, e):
         self.startEdge = True
         self.dragBlock = True
@@ -109,7 +122,7 @@ class skyMatcher:
             point = Vertex(0, self.vertexX, self.vertexY)
             
             for vertex in self.vertexList:
-                distance = Vertices().getDistance(vertex, point) 
+                distance = Graph().getDistance(vertex, point) 
                 if distance < 20:
                     self.draw = False
                     self.vertexX, self.vertexY = vertex.x, vertex.y
@@ -127,8 +140,8 @@ class skyMatcher:
         
         # Inserting endpoint vertex
         if self.startEdge == False:
-            startPoint = Vertices().getClosestVertexIndex(self.vertexList, self.origin)
-            endPoint = Vertices().getClosestVertexIndex(self.vertexList, (self.vertexX, self.vertexY))
+            startPoint = Graph().getClosestVertexIndex(self.vertexList, self.origin)
+            endPoint = Graph().getClosestVertexIndex(self.vertexList, (self.vertexX, self.vertexY))
         
             # Swap starting and ending vertex accordingly
             if startPoint > endPoint:
@@ -170,7 +183,7 @@ class Edge:
     vertex1: Vertex
     vertex2: Vertex
 
-class Vertices:
+class Graph:
     def getDistance(self, vertex1, vertex2):
         return ((vertex1.x - vertex2.x)**2 + (vertex1.y - vertex2.y)**2)**0.5
     
@@ -183,4 +196,6 @@ class Vertices:
 
 
 if __name__ == "__main__":        
-    CTK_Window = skyMatcher()
+    CTK_Window = starScribbler()
+    #data = StarData()
+    #data.draw_canvas()
