@@ -47,14 +47,10 @@ def plotUserInput(user_vertices, user_edges):
     plt.show()
 
 
-
-
-
-
 user_vertices, user_edges = getUserInput()
 # plotUserInput(user_vertices, user_edges)
 # # Generate random points
-num_points = 500
+num_points = 300
 np.random.seed(5)
 
 
@@ -86,15 +82,14 @@ for coordates in coordinatePairs:
     rot_matrix = rot(
         user_vertices[1] - user_vertices[0], pair_vector)
 
-    start_point = coord_second
     totalDistance = 0
     for i, vertex in enumerate(user_vertices[2:]):
         counter = i + 2
 
         # input space
-        next_edge = user_vertices[counter] - user_vertices[counter - 1]
+        next_edge = user_vertices[counter] - user_vertices[1]
         const_edge = next_edge@rot_matrix * scale
-        centroid = start_point + const_edge
+        centroid = coord_second + const_edge
 
         # Query the kd-tree for the nearest neighbor to the target point
         nearby_point_indices = tree.query_ball_point(centroid, threshold)
@@ -133,19 +128,21 @@ for coordates in coordinatePairs:
         else:
             totalDistance += distance
             possible_constelation.append(nearest_point)
-            start_point = np.array(nearest_point)
 
         if counter == len(user_vertices) - 1:
-            possible_constelations.append((possible_constelation, totalDistance))
+            possible_constelations.append(
+                (possible_constelation, totalDistance))
 
 
 print(len(possible_constelations))
 possible_constelations
 
 
-sorted_posible_constelations = sorted(possible_constelations, key=lambda x: x[1])
+sorted_posible_constelations = sorted(
+    possible_constelations, key=lambda x: x[1])
 
-final_constellation = possible_constelations[0] #First value will have minimum total distance
+# First value will have minimum total distance
+final_constellation = possible_constelations[0]
 print(final_constellation)
 
 # Extract coordinates from the data
@@ -172,6 +169,7 @@ plt.plot([x_constellation[0], x_constellation[1]], [
 plt.title('Closest Match to User Shape')
 plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
+plt.gca().set_aspect('equal', adjustable='box')
 plt.grid(True)
 plt.legend()
 plt.show()
