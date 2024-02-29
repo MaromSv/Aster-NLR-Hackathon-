@@ -66,33 +66,34 @@ coordinates = list(zip(x_values, y_values))
 tree = cKDTree(coordinates)
 
 
-# Define the target point and distance threshold
-target_point = (2, 5)
+
 threshold = 1  # Adjust as needed
 
-# Query the R-tree for points within the threshold distance of the target point
-nearby_point_indices = tree.query_ball_point(target_point, threshold)
-
-# Get the nearby points
-nearby_points = [coordinates[i] for i in nearby_point_indices]
-
-print(nearby_points)
 
 
 
 
-# coordinatePairs = combinations(coordinates, 2)
+coordinatePairs = combinations(coordinates, 2)
 
-# for coordates in coordinatePairs:
+for coordates in coordinatePairs:
 
-#     distance = euclideanDistance(coordates[0], coordates[1])
-#     input_distances = getLengthsOfInput(user_vertices, user_edges)
-#     scale = distance/ input_distances[0] #Calculate the scale
+    distance = euclideanDistance(coordates[0], coordates[1])
+    input_distances = getLengthsOfInput(user_vertices, user_edges)
+    scale = distance/ input_distances[0] #Calculate the scale
 
-#     centroid = [1, 2] #place holder
+    for vertex in user_vertices[1:]:
 
+        centroid = [1, 2] #place holder
+        # Query the R-tree for points within the threshold distance of the target point
+        nearby_point_indices = tree.query_ball_point(centroid, threshold)
 
+        # Query the kd-tree for the nearest neighbor to the target point
+        distance, nearest_index = tree.query(target_point)
 
+        # Get the nearest point
+        nearest_point = coordinates[nearest_index]
+
+    
 
 
 # # Find the closest match among the random points
