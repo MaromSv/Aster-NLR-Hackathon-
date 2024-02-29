@@ -9,10 +9,10 @@ def getUserInput():
     # Define the adjacency matrix of the user shape
 
     # Convert the adjacency matrix to edges
-    user_edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
+    user_edges = [(0, 1), (1, 2), (2, 3), (3, 0), (0, 4)]
 
     # Define the vertices of the user shape
-    user_vertices = np.array([(1, 1), (1, 2), (2, 2), (2, 1)])
+    user_vertices = np.array([(1, 1), (1, 2), (2, 2), (2, 1), (1, 0)])
 
     return user_vertices, user_edges
 
@@ -47,10 +47,10 @@ def plotUserInput(user_vertices, user_edges):
 
 
 user_vertices, user_edges = getUserInput()
-
+# plotUserInput(user_vertices, user_edges)
 # # Generate random points
-num_points = 50
-np.random.seed(12)
+num_points = 500
+np.random.seed(20)
 
 
 x_values = np.random.rand(num_points) * 10
@@ -61,7 +61,7 @@ coordinates = list(zip(x_values, y_values))
 tree = cKDTree(coordinates)
 
 
-threshold = 0.5
+threshold = 0.2
 
 coordinatePairs = combinations(coordinates, 2)
 
@@ -74,19 +74,21 @@ for coordates in coordinatePairs:
     possible_constelation.append(coord_second)
 
     distance = euclideanDistance(coord_first, coord_second)
+    pair_vector = coord_second - coord_first
 
     input_distances = getLengthsOfInput(user_vertices, user_edges)
     scale = distance / input_distances[0]  # Calculate the scale
-    rot_matrix = get_rotation(
-        user_vertices[1] - user_vertices[0], coord_second - coord_first, input_distances[0], distance)
+    rot_matrix = rot(
+        user_vertices[1] - user_vertices[0], pair_vector)
+
+    start_point = coord_second
     for i, vertex in enumerate(user_vertices[2:]):
-        coord_first = coord_second
         counter = i + 2
 
         # input space
         next_edge = user_vertices[counter] - user_vertices[counter - 1]
         const_edge = next_edge@rot_matrix * scale
-        centroid = coord_second + const_edge
+        centroid = start_point + const_edge
 
         # Query the kd-tree for the nearest neighbor to the target point
         nearby_point_indices = tree.query_ball_point(centroid, threshold)
@@ -105,9 +107,12 @@ for coordates in coordinatePairs:
 
         new_sorted_nearby_points = []
         for index, point in enumerate(sorted_nearby_points):
+            overlap = False
             for coordinate in possible_constelation:
-                if not np.array_equal(point, coordinate):
-                    new_sorted_nearby_points.append(point)
+                if euclideanDistance(point, coordinate) < 0.001:
+                    overlap = True
+            if not overlap:
+                new_sorted_nearby_points.append(point)
 
         # print("constellation", possible_constelation)
         # print("nearby point", new_sorted_nearby_points)
@@ -121,14 +126,14 @@ for coordates in coordinatePairs:
             break  # Point is too far away
         else:
             possible_constelation.append(nearest_point)
-            coord_second = np.array(nearest_point)
+            start_point = np.array(nearest_point)
 
         if counter == len(user_vertices) - 1:
             possible_constelations.append(possible_constelation)
 
 
 print(len(possible_constelations))
-print(possible_constelations)
+# print(possible_constelations)
 
 # TODO: Find best of the possible constelations
 
@@ -158,10 +163,6 @@ print(possible_constelations)
 final_constellation = possible_constelations[0]
 print(final_constellation)
 
-rot_matrix = get_rotation(
-    user_vertices[1] - user_vertices[0], final_constellation[1] - final_constellation[0], input_distances[0], distance)
-
-
 # Extract coordinates from the data
 constellation_coordinates = []
 for item in final_constellation:
@@ -177,9 +178,10 @@ y_constellation = [coord[1] for coord in constellation_coordinates]
 # Plot the closest match in a separate window
 plt.figure()
 plt.scatter(x_values, y_values, color='blue',
-            marker='o', label='Random Points')
-plt.plot(x_constellation, y_constellation, color='green',
-         linestyle='-', marker='o', label='Closest Match')
+            marker='o', label='Random Points', alpha=0.5, s=3)
+for edge in user_edges:
+    plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
+             [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
 plt.plot([x_constellation[0], x_constellation[1]], [
          y_constellation[0], y_constellation[1]], color='black',  label='First edge')
 plt.title('Closest Match to User Shape')
