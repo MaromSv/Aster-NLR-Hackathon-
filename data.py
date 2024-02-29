@@ -146,3 +146,11 @@ def get_star_data_df():
 
 
     return df
+
+
+def get_data_fast():
+    return pd.read_csv('star.csv')
+
+# df = get_data_fast()
+
+# print(df.head())

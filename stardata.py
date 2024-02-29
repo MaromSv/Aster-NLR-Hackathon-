@@ -12,7 +12,7 @@ def get_values(coord):
 
 class StarData:
     def __init__(self):
-        stars = get_star_data_df()
+        stars = get_data_fast()
 
         series = stars.coord.apply(get_values)
         self.positions = np.array(series.tolist())
