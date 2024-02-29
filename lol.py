@@ -10,4 +10,5 @@ print(a@matrix * 0.5)
 
 test = np.array([-2, 0])
 
-print(test@matrix)
+print(@matrix)
+test
