@@ -46,6 +46,26 @@ def plotUserInput(user_vertices, user_edges):
     plt.show()
 
 
+def calculate_similarity(user_vertices, constellation_vertices):
+    # Calculate similarity between vertices (you can use any suitable metric, e.g., Euclidean distance)
+    vertices_similarity = np.mean(np.linalg.norm(user_vertices - constellation_vertices, axis=1))
+    return vertices_similarity
+
+def find_closest_match(user_vertices, possible_constellations):
+    closest_match = None
+    highest_similarity = -1  # Initialize with a value less than the minimum possible similarity
+
+    for constellation_vertices in possible_constellations:
+        similarity = calculate_similarity(user_vertices, constellation_vertices)
+        
+        if similarity > highest_similarity:
+            closest_match = constellation_vertices
+            highest_similarity = similarity
+
+    return closest_match
+
+
+
 user_vertices, user_edges = getUserInput()
 # plotUserInput(user_vertices, user_edges)
 # # Generate random points
@@ -133,34 +153,11 @@ for coordates in coordinatePairs:
 
 
 print(len(possible_constelations))
-# print(possible_constelations)
-
-# TODO: Find best of the possible constelations
-
-# # Find the closest match among the random points
-# best_match_distance = float('inf')
-# best_match_points = None
-
-# # Generate all possible combinations of vertices for the candidate shapes
-# candidate_vertex_combinations = combinations(zip(x_values, y_values), len(user_vertices))
-
-# # Normalize user shape vertices
-# user_normalized = normalize_shape(user_vertices)
-
-# for candidate_vertices in candidate_vertex_combinations:
-#     candidate_shape = np.array(list(candidate_vertices))
-#     # Normalize candidate shape vertices
-#     candidate_normalized = normalize_shape(candidate_shape)
-#     # Connect the last vertex back to the first one to close the shape
-#     candidate_shape = np.vstack((candidate_shape, candidate_shape[0]))
-#     # Calculate Hausdorff distance between normalized shapes
-#     distance = hausdorff_distance(user_normalized, candidate_normalized)
-#     if distance < best_match_distance:
-#         best_match_distance = distance
-#         best_match_points = candidate_shape
+possible_constelations
 
 
-final_constellation = possible_constelations[0]
+
+final_constellation = find_closest_match(user_vertices, possible_constelations)
 print(final_constellation)
 
 # Extract coordinates from the data
