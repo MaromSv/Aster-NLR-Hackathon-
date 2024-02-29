@@ -2,15 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from itertools import combinations
 from scipy.spatial import cKDTree
-
+from linalg import *
 
 
 def getUserInput():
     # Define the adjacency matrix of the user shape
     user_adjacency = np.array([[0, 1, 0, 1],
-                            [1, 0, 1, 0],
-                            [0, 1, 0, 1],
-                            [1, 0, 1, 0]])
+                               [1, 0, 1, 0],
+                               [0, 1, 0, 1],
+                               [1, 0, 1, 0]])
 
     # Convert the adjacency matrix to edges
     user_edges = []
@@ -24,13 +24,16 @@ def getUserInput():
 
     return user_vertices, user_edges
 
+
 def euclideanDistance(point1, point2):
     return np.sqrt((point2[0] - point1[0])**2 + (point2[1] - point1[1])**2)
+
 
 def getLengthsOfInput(user_vertices, user_edges):
     lengths_of_input = []
     for edge in user_edges:
-        lengths_of_input.append(euclideanDistance(user_vertices[edge[0]], user_vertices[edge[1]]))
+        lengths_of_input.append(euclideanDistance(
+            user_vertices[edge[0]], user_vertices[edge[1]]))
     return lengths_of_input
 
 
@@ -79,20 +82,30 @@ nearby_points = [coordinates[i] for i in nearby_point_indices]
 print(nearby_points)
 
 
+coordinatePairs = combinations(coordinates, 2)
 
+for coordates in coordinatePairs:
+    coord_first = np.array([coordates[0][0], coordates[0][1]])
+    coord_second = np.array([coordates[1][0], coordates[1][1]])
+    distance = euclideanDistance(coord_first, coord_second)
+    input_distances = getLengthsOfInput(user_vertices, user_edges)
+    scale = distance / input_distances[0]  # Calculate the scale
+    rot_matrix = get_rotation(
+        user_vertices[1] - user_vertices[0], coord_second - coord_first, input_distances[0], distance)
 
-# coordinatePairs = combinations(coordinates, 2)
+    # input space
+    next_edge = user_vertices[2] - user_vertices[1]
+    const_edge = next_edge@rot_matrix * scale
+    centroid = coord_second + const_edge
 
-# for coordates in coordinatePairs:
+    print(user_vertices[0])
+    print(user_vertices[1])
+    print(user_vertices[2])
 
-#     distance = euclideanDistance(coordates[0], coordates[1])
-#     input_distances = getLengthsOfInput(user_vertices, user_edges)
-#     scale = distance/ input_distances[0] #Calculate the scale
-
-#     centroid = [1, 2] #place holder
-
-
-
+    print(coord_first)
+    print(coord_second)
+    print(centroid)
+    break
 
 
 # # Find the closest match among the random points
