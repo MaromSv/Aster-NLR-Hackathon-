@@ -45,18 +45,18 @@ class starScribbler:
 
         # App logos
         logoAster = Image.open('./assets/asterLogo.png')
-        logoAster = logoAster.resize((75, 75))
+        logoAster = logoAster.resize((50, 75))
 
         logoGame = Image.open('./assets/SkyScribblerLogo.png')
         logoGame = logoGame.resize((75, 75))
 
         self.logoAster = ctk.CTkLabel(master=self.root, text="",
                                        image = ImageTk.PhotoImage(logoAster))
-        self.logoAster.place(relx=0.9, rely=0.01)
+        self.logoAster.place(relx=0.93, rely=0.01)
 
         self.logoGame = ctk.CTkLabel(master=self.root, text="",
                                        image = ImageTk.PhotoImage(logoGame))
-        self.logoGame.place(relx=0.01, rely=0.01)
+        self.logoGame.place(relx=0.02, rely=0.01)
 
         # Control widgets
         self.buttonClearCanvas = ctk.CTkButton(master = self.root,
@@ -83,7 +83,7 @@ class starScribbler:
 
         # Drawing canvas
         self.canvas = ctk.CTkCanvas(master=self.frame, height= self.root.winfo_height()*0.775,
-                                  width = self.root.winfo_width()*0.95)
+                                  width = self.root.winfo_width()*0.95, bg='black')
        
         self.canvas.pack(expand=1)
 
@@ -195,7 +195,7 @@ class starScribbler:
                 
                 self.startEdge = True
                 self.origin = (self.vertexX, self.vertexY)
-                self.line = self.canvas.create_line(self.origin[0], self.origin[1], self.vertexX, self.vertexY, width=2, smooth=True)
+                self.line = self.canvas.create_line(self.origin[0], self.origin[1], self.vertexX, self.vertexY, width=2, fill="white", smooth=True)
                 self.dragBlock = False
             else:
                 self.canvas.coords(self.line, 0, 0, 0, 0)
@@ -204,7 +204,7 @@ class starScribbler:
         # Inserting startpoint vertex
         else:
             self.origin = (self.vertexX, self.vertexY)
-            self.line = self.canvas.create_line(self.origin[0], self.origin[1], self.vertexX, self.vertexY, width=2, smooth=True)
+            self.line = self.canvas.create_line(self.origin[0], self.origin[1], self.vertexX, self.vertexY, width=2, fill="white", smooth=True)
             self.dragBlock = False
 
         # Lift circle to the top
