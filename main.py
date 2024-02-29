@@ -10,8 +10,12 @@ from PIL import Image, ImageTk
 from starGeneratorGui import StarGenerator
 
 class starScribbler:
-        
+
+    """
+    Main window rendering.
+    """   
     def __init__(self):
+        # Variable definition
         self.origin = (0, 0)
         self.vertexList = []
         self.edgesList = []
@@ -20,6 +24,7 @@ class starScribbler:
         self.canvasId = 0
         self.toplevel_window = None
 
+        # Custom Tkinter settings
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
         self.root = ctk.CTk()
@@ -27,6 +32,7 @@ class starScribbler:
         self.root.title("Star Scribbler")
         self.root.update()
 
+        # Title label
         self.labelTitle = ctk.CTkLabel(master=self.root, text="Star Scribbler", font=('TkDefaultFont', 80))
         self.labelTitle.place(relx=0.3, rely=0)
 
@@ -37,27 +43,7 @@ class starScribbler:
         
         self.frame.place(relx=0.025, rely=0.1)
 
-        self.buttonClearCanvas = ctk.CTkButton(master = self.root,
-                               text="Clear canvas",
-                               width=250,
-                               height=40,
-                               command=self.clearCanvas)
-        self.buttonClearCanvas.place(relx=0.025,rely=0.95)
-
-        self.buttonClearCanvas = ctk.CTkButton(master = self.root,
-                               text="Undo",
-                               width=250,
-                               height=40,
-                               command=self.undo)
-        self.buttonClearCanvas.place(relx=0.025,rely=0.90)
-
-        self.buttonGenerate = ctk.CTkButton(master = self.root,
-                               text="Generate",
-                               width=250,
-                               height=90,
-                               command=self.generate)
-        self.buttonGenerate.place(relx=0.77, rely=0.90)
-
+        # App logos
         logoAster = Image.open('./assets/asterLogo.png')
         logoAster = logoAster.resize((75, 75))
 
@@ -72,12 +58,36 @@ class starScribbler:
                                        image = ImageTk.PhotoImage(logoGame))
         self.logoGame.place(relx=0.01, rely=0.01)
 
+        # Control widgets
+        self.buttonClearCanvas = ctk.CTkButton(master = self.root,
+                               text="Clear canvas",
+                               width=250,
+                               height=40,
+                               command=self.clearCanvas)
+        self.buttonClearCanvas.place(relx=0.025,rely=0.95)
 
+        self.buttonClearCanvas = ctk.CTkButton(master = self.root,
+                               text="Undo",
+                               width=250,
+                               height=40,
+                               command=self.undo)
+        
+        self.buttonClearCanvas.place(relx=0.025,rely=0.90)
+
+        self.buttonGenerate = ctk.CTkButton(master = self.root,
+                               text="Generate",
+                               width=250,
+                               height=90,
+                               command=self.generate)
+        self.buttonGenerate.place(relx=0.77, rely=0.90)
+
+        # Drawing canvas
         self.canvas = ctk.CTkCanvas(master=self.frame, height= self.root.winfo_height()*0.775,
                                   width = self.root.winfo_width()*0.95)
        
         self.canvas.pack(expand=1)
 
+        # Shortcut bindigs
         self.canvas.bind("<ButtonRelease-1>", self.release)
         self.canvas.bind("<ButtonRelease-3>", self.rightClick)
         self.canvas.bind("<B1-Motion>", self.drag)
@@ -86,6 +96,9 @@ class starScribbler:
 
         self.root.mainloop()
     
+    """
+    Removes all elements from Canvas
+    """
     def clearCanvas(self):
         print(self.vertexList)
         print(self.edgesList)
@@ -94,34 +107,40 @@ class starScribbler:
         self.edgesList = []
         self.root.update()
 
+    """
+    Removes last vertex and edge
+    """
     def undo(self):
         self.canvas.delete(self.canvasId-1)
         self.canvas.delete(self.canvasId)
         self.canvasId -= 2
 
+    """
+    Generate adjacency matrix and launches output window.
+    """
     def generate(self):
         print(self.vertexList)
         print(self.edgesList)
-
         self.toplevel_window = StarGenerator(self.root)
-        #data = StarData()
-        #data.draw_canvas()
-        """
-        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
-            self.toplevel_window = ctk.CTkToplevel(self.root)  
-        else:
-            self.toplevel_window.focus()
-        """
-
+        
+    
+    """
+    Mouse right click handler. Selects new start vertex.
+    """
     def rightClick(self, e):
         self.startEdge = True
         self.dragBlock = True
 
-
+    """
+    Mouse drag detection handler. Redraws edge.
+    """
     def drag(self, e):
         if self.dragBlock == False and self.line is not None:
             self.canvas.coords(self.line, self.origin[0], self.origin[1], e.x, e.y)
 
+    """
+    Mouse left button release handler.
+    """
     def release(self, e):
         self.draw = True
         self.dragBlock = True
@@ -133,6 +152,9 @@ class starScribbler:
         self.vertexY = e.y
         self.drawGraph()
 
+    """
+    Records new vertex and connects ajacent vertex with edge.
+    """
     def drawGraph(self):
         # Drag point to another closest element if possible
         if len(self.vertexList) >= 1:
@@ -214,5 +236,3 @@ class Graph:
 
 if __name__ == "__main__":        
     CTK_Window = starScribbler()
-    #data = StarData()
-    #data.draw_canvas()
