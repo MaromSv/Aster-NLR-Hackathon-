@@ -68,4 +68,12 @@ class StarData:
         in_frame = ((result_df["z"] > -1) & (result_df["z"] < 1)) & ((result_df["x"] > -1)
                                                                      & (result_df["x"] < 1)) & ((result_df["y"] > -1) & (result_df["y"] < 1))
         visible = result_df[in_frame]
-        return visible
+
+        plt.figure(figsize=(10, 6))
+        ax = plt.subplot(111, projection='aitoff')
+        ax.grid(True)
+
+        # Using seaborn scatterplot
+        sc = ax.scatter(x=visible['x'], y=visible['y'],
+                        c="yellow", s=10, alpha=0.7)
+        plt.show()
