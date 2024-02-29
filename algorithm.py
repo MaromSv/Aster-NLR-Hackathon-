@@ -9,10 +9,11 @@ def getUserInput():
     # Define the adjacency matrix of the user shape
 
     # Convert the adjacency matrix to edges
-    user_edges = [(0, 1), (1, 2), (2, 3), (3, 0), (0, 4)]
+    user_edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 0)]
 
     # Define the vertices of the user shape
-    user_vertices = np.array([(1, 1), (1, 2), (2, 2), (2, 1), (1, 0)])
+    user_vertices = np.array(
+        [(1, 1), (3, 3), (5, 1), (4, 1), (4, -2), (2, -2), (2, 1)])
 
     return user_vertices, user_edges
 
@@ -46,23 +47,7 @@ def plotUserInput(user_vertices, user_edges):
     plt.show()
 
 
-def calculate_similarity(user_vertices, constellation_vertices):
-    # Calculate similarity between vertices (you can use any suitable metric, e.g., Euclidean distance)
-    vertices_similarity = np.mean(np.linalg.norm(user_vertices - constellation_vertices, axis=1))
-    return vertices_similarity
 
-def find_closest_match(user_vertices, possible_constellations):
-    closest_match = None
-    highest_similarity = -1  # Initialize with a value less than the minimum possible similarity
-
-    for constellation_vertices in possible_constellations:
-        similarity = calculate_similarity(user_vertices, constellation_vertices)
-        
-        if similarity > highest_similarity:
-            closest_match = constellation_vertices
-            highest_similarity = similarity
-
-    return closest_match
 
 
 
@@ -70,7 +55,7 @@ user_vertices, user_edges = getUserInput()
 # plotUserInput(user_vertices, user_edges)
 # # Generate random points
 num_points = 500
-np.random.seed(20)
+np.random.seed(5)
 
 
 x_values = np.random.rand(num_points) * 10
@@ -81,7 +66,7 @@ coordinates = list(zip(x_values, y_values))
 tree = cKDTree(coordinates)
 
 
-threshold = 0.2
+threshold = 1
 
 coordinatePairs = combinations(coordinates, 2)
 
@@ -102,6 +87,7 @@ for coordates in coordinatePairs:
         user_vertices[1] - user_vertices[0], pair_vector)
 
     start_point = coord_second
+    totalDistance = 0
     for i, vertex in enumerate(user_vertices[2:]):
         counter = i + 2
 
@@ -145,24 +131,26 @@ for coordates in coordinatePairs:
         if distance > threshold:
             break  # Point is too far away
         else:
+            totalDistance += distance
             possible_constelation.append(nearest_point)
             start_point = np.array(nearest_point)
 
         if counter == len(user_vertices) - 1:
-            possible_constelations.append(possible_constelation)
+            possible_constelations.append((possible_constelation, totalDistance))
 
 
 print(len(possible_constelations))
 possible_constelations
 
 
+sorted_posible_constelations = sorted(possible_constelations, key=lambda x: x[1])
 
-final_constellation = find_closest_match(user_vertices, possible_constelations)
+final_constellation = possible_constelations[0] #First value will have minimum total distance
 print(final_constellation)
 
 # Extract coordinates from the data
 constellation_coordinates = []
-for item in final_constellation:
+for item in final_constellation[0]:
     if isinstance(item, tuple):
         constellation_coordinates.append(item)
     else:
