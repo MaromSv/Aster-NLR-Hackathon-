@@ -174,7 +174,35 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
 
     # First value will have minimum total distance
     final_constellation = possible_constelations[0]
-    return final_constellation
+
+
+    # Split the coordinates into x and y arrays
+    x_constellation = [coord[0] for coord in final_constellation]
+    y_constellation = [coord[1] for coord in final_constellation]
+
+    # Plot the closest match in a separate window
+    fig = plt.figure()
+    ax = fig.gca()
+
+    ax.scatter(starsx, starsy, color='blue', marker='o', label='Random Points', alpha=0.5, s=3)
+
+    for edge in user_edges:
+        ax.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
+                [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
+
+    ax.plot([x_constellation[0], x_constellation[1]], 
+            [y_constellation[0], y_constellation[1]], color='black', label='First edge')
+
+    ax.set_title('Closest Match to User Shape')
+    ax.set_xlabel('X-axis')
+    ax.set_ylabel('Y-axis')
+    ax.set_aspect('equal', adjustable='box')
+    ax.grid(True)
+    ax.legend()
+
+    plt.show()
+
+    return fig, final_constellation
 
 
 
