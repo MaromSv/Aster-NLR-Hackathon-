@@ -163,7 +163,7 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
             if distance > threshhold:
                 break  # Point is too far away
             else:
-                totalDistance += distance * (1 - 0 * np.max([0, penalty]))
+                totalDistance += distance * (1 - 0.3 * np.max([0, penalty]))
                 if (totalDistance > best_length):
                     break
                 possible_constelation.append(nearest_point)
