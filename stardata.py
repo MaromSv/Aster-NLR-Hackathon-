@@ -3,7 +3,7 @@ from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.figure import Figure 
+from matplotlib.figure import Figure
 pd.plotting.register_matplotlib_converters()
 
 
@@ -13,15 +13,19 @@ def get_values(coord):
 
 class StarData:
     def __init__(self):
-        stars = get_star_data_df()
+        self.stars = get_star_data_df()
 
-        series = stars.coord.apply(get_values)
+        series = self.stars.coord.apply(get_values)
         self.positions = np.array(series.tolist())
+        self.constellations = []
+        # put these as parameters
+        self.fov = 90
+        self.az = 45
+        self.elev = 90
 
-    def get_plot(self):
+    def get_visible(self):
         near = 0.1
         far = 1
-        fov = 90
         aspect = 1
 
         S = 1 / np.tan(np.deg2rad(fov/2))
@@ -35,11 +39,11 @@ class StarData:
             [0, 0, -1, 0],
         ])
 
-        rot_y = np.deg2rad(45)
+        rot_y = np.deg2rad(self.az)
         cos_y = np.cos(rot_y)
         sin_y = np.sin(rot_y)
 
-        rot_x = np.deg2rad(93)
+        rot_x = np.deg2rad(self.elev)
         cos_x = np.cos(rot_x)
         sin_x = np.sin(rot_x)
 
@@ -68,19 +72,30 @@ class StarData:
 
         in_frame = ((result_df["z"] > -1) & (result_df["z"] < 1)) & ((result_df["x"] > -1)
                                                                      & (result_df["x"] < 1)) & ((result_df["y"] > -1) & (result_df["y"] < 1))
-        visible = result_df[in_frame]
 
-        fig = Figure(figsize = (11.5, 6.5), tight_layout=True, facecolor="black")
+        result_df["id"] = self.stars["id"]
+        result_df = result_df["x", "y", "z", "id"]
+        visible = result_df[in_frame]
+        return result_df, visible
+
+    def get_plot(self, result_df, visible):
+
+        fig = Figure(figsize=(11.5, 6.5), tight_layout=True, facecolor="black")
         ax = fig.add_subplot(111)
         ax.set_yticklabels([])
         ax.set_xticklabels([])
-        ax.tick_params(left = False, bottom=False)
+        ax.tick_params(left=False, bottom=False)
         ax.set_facecolor('black')
 
         # Using seaborn scatterplot
-        sc = ax.scatter(x=visible['x'], y=visible['y'],
-                        c="yellow", s=10, alpha=0.7)
-        
+        ax.scatter(x=visible['x'], y=visible['y'],
+                   c="yellow", s=10, alpha=0.7)
+        for constel in self.constellations:
+            row = result_df[result_df["id"] == constel]
+            constel_x = row["x"].iloc[0]
+            constel_y = row["y"].iloc[0]
+            ax.plot()
+
         plt.show()
         return fig
 
