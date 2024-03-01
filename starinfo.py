@@ -89,8 +89,11 @@ def getspecifics(id):
     if (name.isspace()):
         name = 'unnamed'
     info['name'] = name
-    distance = str(int(3.26/(df_grouped['Parallax'][id]))) + ' lightyears'
-    if (distance == np.nan):
+    distacne = ''
+    a = 3.26/(df_grouped['Parallax'][id])
+    if (not a == np.nan):
+        distance = str(int(3.26/(df_grouped['Parallax'][id]))) + ' lightyears'
+    else:
         distance = 'unknown'
     info['distance'] =  distance
     return info
