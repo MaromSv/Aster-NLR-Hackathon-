@@ -11,43 +11,43 @@ def spectraltypeinfo(type):
     madeof = ''
     if (type == 'O'):
         color += 'blue'
-        temperature += '> 30000'
+        temperature += '> 30000K'
         madeof += 'Mainly neutral and ionized helium lines and weak hydrogen lines'
     elif (type == 'B'):
         color += 'blue-white'
-        temperature +=  '10000 - 30000'
+        temperature +=  '10000 - 30000K'
         madeof += 'Neutral helium lines and strong hydrogen lines'
     elif (type == 'A'):
         color += 'white'
-        temperature += '7500 - 10000'
+        temperature += '7500 - 10000K'
         madeof += 'Strongest hydrogen lines weak ionized calium and other metal lines'
     elif (type == 'F'):
         color += 'yellow-white'
-        temperature += '6000 - 7500'
+        temperature += '6000 - 7500K'
         madeof += 'Strong hydrogen, ionized calium and sodium lines and many lines of other ionized and neutral metals'
     elif (type == 'G'):
         color += 'yellow'
-        temperature += '5200 - 6000'
+        temperature += '5200 - 6000K'
         madeof += 'Weaker hydrogen lines, strong ionized calium and sodium lines and many lines of other ionized and neutral metals'
     elif (type == 'K'):
         color += 'orange'
-        temperature += '3700 - 5200'
+        temperature += '3700 - 5200K'
         madeof += 'Very weak hydorgen lines, strong ionized calium and sodium lines and many lines of other neutral metals'
     elif (type == 'M'):
         color += 'red'
-        temperature += '2400 - 3700'
+        temperature += '2400 - 3700K'
         madeof += 'Strong lines of neutral metals and molecular bands of titanium oxide dominate'
     elif (type == 'L'):
         color += 'red'
-        temperature += '1300 - 2400'
+        temperature += '1300 - 2400K'
         madeof += 'Metal hydride lines and akali metal lines'
     elif (type == 'T'):
         color += 'magenta'
-        temperature += '700 - 1300'
+        temperature += '700 - 1300K'
         madeof += 'Methane lines'
     elif (type == 'Y'):
         color += 'infrared'
-        temperature += '< 700'
+        temperature += '< 700K'
         madeof += 'Ammonia lines'
     spectraltypeinfo.append(color)
     spectraltypeinfo.append(temperature)
@@ -63,16 +63,28 @@ def getvisibility(id):
     return visibility
 
 def getspecifics(id):
-    info = []
+    info = {
+        'MWtype': 'unknown', 'spectraltype' : 'unknown', 'spectralsubtype' : 'unknown', 'luminosityclass' : 'unknown', 'color' : 'unknown', 
+        'temperature' : 'unknown', 'madeof' : 'unknown', 'name' : 'unknown', 'distance' : 'unknown', 'numberofstars' : 1
+    }
     df = get_star_data_df()
     df_grouped = df.set_index(['id'])
     spectraltypefull = df_grouped['spectral_type_full'][id]
     specs = dissectspectraltype(spectraltypefull)
-    info.append(specs)
+    info['MWtype'] = specs[0][0]
+    info['spectraltype'] = specs[0][1]
+    info['spectralsubtype'] = specs[0][3]
+    info['luminosityclass'] = specs[0][4]
+    info['color'] = specs[0][2][0]
+    info['temperature'] = specs[0][2][1]
+    info['madeof'] = specs[0][2][2]
+    info['numberofstars'] = len(specs)
     name = df_grouped['name'][id]
-    info.append(name)
+    info['name'] = name
     distance = 3.26/(df_grouped['Parallax'][id])
-    info.append(distance)
+    if (not distance == np.nan):
+        distance = 'unknown'
+    info['distance'] =  distance
 
     return info
 
@@ -88,7 +100,6 @@ def dissectspectraltype(spectraltypefull):
         i = i + 1
     Mounttype = spectraltypefull[0:maintypeindex]
     spectraltype = spectraltypefull[maintypeindex]
-    print(spectraltype)
     typeinfo = spectraltypeinfo(spectraltype)
     spectraltypefull = spectraltypefull[maintypeindex+1:len(spectraltypefull)]
     Wilson = ''
