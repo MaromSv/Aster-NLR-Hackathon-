@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from dataclasses import dataclass
 from PIL import Image, ImageTk
-import numpy
+import cities
 
 from starGeneratorGui import StarGenerator
 
@@ -62,25 +62,40 @@ class skyScribbler:
         # Control widgets
         self.buttonClearCanvas = ctk.CTkButton(master = self.root,
                                text="Clear canvas",
+                               font=('TkDefaultFont', 15),
                                width=250,
                                height=40,
                                command=self.clearCanvas)
-        self.buttonClearCanvas.place(relx=0.025,rely=0.95)
+        self.buttonClearCanvas.place(relx=0.55,rely=0.95)
 
-        self.buttonClearCanvas = ctk.CTkButton(master = self.root,
+        self.buttonUndo = ctk.CTkButton(master = self.root,
                                text="Undo",
                                width=250,
+                               font=('TkDefaultFont', 15),
                                height=40,
                                command=self.undo)
         
-        self.buttonClearCanvas.place(relx=0.025,rely=0.90)
+        self.buttonUndo.place(relx=0.55,rely=0.90)
 
         self.buttonGenerate = ctk.CTkButton(master = self.root,
                                text="Generate",
                                width=250,
                                height=90,
+                               font=('TkDefaultFont', 15),
                                command=self.generate)
         self.buttonGenerate.place(relx=0.77, rely=0.90)
+
+        self.coord = ctk.StringVar() 
+        self.locationCombobox = ctk.CTkComboBox(master=self.root, width=400, height=40, 
+                                                values=list(cities.citiesList.keys()), 
+                                                variable=self.coord, command=self.comboboxChange, 
+                                                font=('TkDefaultFont', 15))
+        
+        self.locationCombobox.place(relx=0.025, rely = 0.9)
+        self.locationCombobox.set('Amsterdam, The Netherlands')
+
+        self.locationLabel = ctk.CTkLabel(master=self.root, text='52.3676° N, 4.9041° E', font=('TkDefaultFont', 15))
+        self.locationLabel.place(relx=0.025, rely=0.95)
 
         # Drawing canvas
         self.canvas = ctk.CTkCanvas(master=self.frame, height= self.root.winfo_height()*0.775,
@@ -97,6 +112,9 @@ class skyScribbler:
 
         self.root.mainloop()
     
+    def comboboxChange(self, event):
+        self.locationLabel.configure(text=cities.citiesList[self.coord.get()])
+
     """
     Removes all elements from Canvas
     """
@@ -164,7 +182,7 @@ class skyScribbler:
             
             for vertex in self.vertexList:
                 distance = Graph().getDistance(vertex, point) 
-                if distance < 20:
+                if distance < 50:
                     self.draw = False
                     self.vertexX, self.vertexY = vertex.x, vertex.y
                     break
