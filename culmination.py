@@ -85,7 +85,6 @@ while True:
     local_sid_time = datetime.time(LSThh, LSTmm, LSTss)
     time_to_culmination = datetime.datetime.combine(datetime.date.min, const_avg_time) - datetime.datetime.combine(datetime.date.min, local_sid_time)
     culmination_time = TD.replace(microsecond=0, second=0) + time_to_culmination
-    #print("Next culmination will be at", culmination_time, "UTC.")
 
     twilight = ephem.Observer()
 
@@ -103,11 +102,7 @@ while True:
     beg_twilight=twilight.previous_rising(ephem.Sun(), use_center=True) #Begin civil twilight
     end_twilight=twilight.next_setting   (ephem.Sun(), use_center=True) #End civil twilight
 
-    #print("Beginning of nautical twilight:", beg_twilight)
-    #print("Ending of nautical twilight:", end_twilight)
-
     if culmination_time < end_twilight.datetime() and culmination_time > beg_twilight.datetime():
-        #print("Constellation not visible at culmination :(\n")
         TD = TD + datetime.timedelta(days=1)
     else:
         break
