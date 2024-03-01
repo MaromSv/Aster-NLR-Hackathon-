@@ -70,13 +70,17 @@ class StarData:
                                                                      & (result_df["x"] < 1)) & ((result_df["y"] > -1) & (result_df["y"] < 1))
         visible = result_df[in_frame]
 
-        fig = Figure(figsize = (8, 6), dpi = 100)
+        fig = Figure(figsize = (11.5, 6.5), tight_layout=True, facecolor="black")
         ax = fig.add_subplot(111)
-        ax.grid(True)
+        ax.set_yticklabels([])
+        ax.set_xticklabels([])
+        ax.tick_params(left = False, bottom=False)
+        ax.set_facecolor('black')
 
         # Using seaborn scatterplot
         sc = ax.scatter(x=visible['x'], y=visible['y'],
                         c="yellow", s=10, alpha=0.7)
+        
         plt.show()
         return fig
 
