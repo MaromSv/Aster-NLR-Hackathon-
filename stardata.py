@@ -28,7 +28,7 @@ class StarData:
         far = 1
         aspect = 1
 
-        S = 1 / np.tan(np.deg2rad(fov/2))
+        S = 1 / np.tan(np.deg2rad(self.fov/2))
         b = (far+near) / (near - far)
         c = (2*far*near) / (near - far)
 
