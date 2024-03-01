@@ -152,12 +152,18 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
                 break
 
             nearest_point = new_sorted_nearby_points[0]
+
+            cool_edge = user_vertices[counter] - user_vertices[counter - 1]
+            trans_edge = cool_edge@rot_matrix * scale
+            gaming = nearest_point - possible_constelation[-1]
+            penalty = np.dot(trans_edge / np.linalg.norm(trans_edge),
+                             gaming / np.linalg.norm(gaming))
             distance = euclideanDistance(nearest_point, centroid)
 
             if distance > threshhold:
                 break  # Point is too far away
             else:
-                totalDistance += distance
+                totalDistance += distance * (1 - 0 * np.max([0, penalty]))
                 if (totalDistance > best_length):
                     break
                 possible_constelation.append(nearest_point)
@@ -176,7 +182,7 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
         possible_constelations, key=lambda x: x[1])
 
     # First value will have minimum total distance
-    final_constellation = possible_constelations[0]
+    final_constellation = possible_constelations[-1]
 
     # Split the coordinates into x and y arrays
     x_constellation = [coord[0] for coord in final_constellation[0]]
@@ -192,13 +198,13 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
 
     # Using seaborn scatterplot
     ax.scatter(x=starsx, y=starsy,
-                c="yellow", s=10, alpha=0.7, picker=True)
-    
+               c="yellow", s=10, alpha=0.7, picker=True)
+
     for edge in user_edges:
         ax.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
                 [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-', color="white")
 
-    #crs.connect("add", lambda sel: sel.annotation.set_text(
+    # crs.connect("add", lambda sel: sel.annotation.set_text(
     #    'Star #{}\nx={}, y={}\n{}'.format(sel.index, sel.target[0], sel.target[1], starinfo.getspecifics(1))))
 
     disconnect_zoom = zoom_factory(ax)
