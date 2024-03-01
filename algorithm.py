@@ -189,9 +189,6 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
         ax.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
                 [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-', color="white")
 
-    ax.plot([x_constellation[0], x_constellation[1]],
-            [y_constellation[0], y_constellation[1]], color='black', label='First edge')
-
     ax.set_yticklabels([])
     ax.set_xticklabels([])
     ax.tick_params(left=False, bottom=False)
