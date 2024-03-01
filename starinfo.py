@@ -81,7 +81,6 @@ def getspecifics(id):
     type += specs[0][4]
     info['type'] = type
     info['spectraltype'] = specs[0][1] + specs[0][3]
-    info['luminosityclass'] = specs[0][4]
     info['color'] = specs[0][2][0]
     info['temperature'] = specs[0][2][1]
     info['madeof'] = specs[0][2][2]
@@ -131,37 +130,40 @@ def dissectspectraltype(spectraltypefull):
             Wilson = Wilson + ' (uncertain)'
     i = 0
     luminosityindex = 0
-    while i < len(spectraltypefull):
-        if (spectraltypefull[i].isnumeric()):
-            i = i + 1
-        elif (spectraltypefull[i] in ['.', '-']):
-            if(spectraltypefull[i+1].isnumeric()):
-                i = i + 2
-        elif (spectraltypefull[i] == '+'):
-            stars = stars + 1
-        luminosityindex = i
-        break
+    if (not spectraltypefull == ''):
+        while i < len(spectraltypefull):
+            if (spectraltypefull[i].isnumeric()):
+                i = i + 1
+            elif (spectraltypefull[i] in ['.', '-']):
+                if(spectraltypefull[i+1].isnumeric()):
+                    i = i + 2
+            elif (spectraltypefull[i] == '+'):
+                stars = stars + 1
+            luminosityindex = i
+            break
     spectralsubclass = spectraltypefull[0:luminosityindex]
     spectraltypefull = spectraltypefull[luminosityindex:len(spectraltypefull) - 1]
     luminosityclasses = ['I', 'V', '-', '/', 'a', 'b']
     end = 0
     i = 0
-    while i < len(spectraltypefull):
-        if (spectraltypefull[i] in luminosityclasses):
-            i = i + 1
-        if (spectraltypefull[i] == '+'):
-            stars = stars + 1
-        end = i
-        break
+    if (not spectraltypefull == ''):
+        while i < len(spectraltypefull):
+            if (spectraltypefull[i] in luminosityclasses):
+                i = i + 1
+            elif (spectraltypefull[i] == '+'):
+                stars = stars + 1
+            end = i
+            break
     luminositiyclass = spectraltypefull[0:end]
     multiclass = False
     seperatorindex = 0
     i = 0
-    while i < len(luminositiyclass):
-        if (luminositiyclass[i] in ['-', '/']):
-            multiclass = True
-            seperatorindex = i
-        i = i + 1
+    if (not luminositiyclass == ''):
+        while i < len(luminositiyclass):
+            if (luminositiyclass[i] in ['-', '/']):
+                multiclass = True
+                seperatorindex = i
+            i = i + 1
     if (multiclass):
         class1 = romantoclass(luminositiyclass[0:seperatorindex])
         class2 = romantoclass(luminositiyclass[seperatorindex + 1:len(luminositiyclass) - 1])
@@ -174,11 +176,12 @@ def dissectspectraltype(spectraltypefull):
     spectraltypefull = spectraltypefull[end:len(spectraltypefull) - 1]
     if (stars == 1):
         i = 0
-        while i < len(spectraltypefull):
-            if (spectraltypefull[i] == '+'):
-                stars = stars + 1
-                break
-            i = i + 1
+        if (not spectraltypefull == ''):
+            while i < len(spectraltypefull):
+                if (spectraltypefull[i] == '+'):
+                    stars = stars + 1
+                    break
+                i = i + 1
     starinfo = []
     starinfo.append(Wilson)
     starinfo.append(spectraltype)
@@ -211,4 +214,4 @@ def romantoclass(roman):
         luminosityclass += 'a luminous supergiant'
     return luminosityclass
 
-print(printinfo(getspecifics(36)))
+print(printinfo(getspecifics(337)))
