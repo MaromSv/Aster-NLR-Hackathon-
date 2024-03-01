@@ -56,9 +56,27 @@ class StarGenerator(ctk.CTkToplevel):
     def elevationChange(self, value):
         self.elevation = value
         self.labelElevationValue.configure(text=str(int(value)))
+        self.starData.elev = self.elevation
+        self.starData.az = self.azimuth
+
+        result_df, visible = self.starData.get_visible()
+        self.fig = self.starData.get_plot(result_df, visible)
+
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().place(relx=0.02, rely=0.025)
         self.root.update()
 
     def azimuthChange(self, value):
         self.azimuth = value
         self.labelAzimuthValue.configure(text=str(int(value)))
+        self.starData.elev = self.elevation
+        self.starData.az = self.azimuth
+
+        result_df, visible = self.starData.get_visible()
+        self.fig = self.starData.get_plot(result_df, visible)
+
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().place(relx=0.02, rely=0.025)
         self.root.update()
