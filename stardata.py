@@ -1,4 +1,4 @@
-#from algorithm import algorithm
+# from algorithm import algorithm
 from data import get_star_data_df
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
@@ -26,8 +26,8 @@ class StarData:
         self.user_edges = []
         # put these as parameters
         self.fov = 90
-        self.az = 45
-        self.elev = 90
+        self.az = 0
+        self.elev = 0
 
     def get_visible(self):
         near = 0.1
@@ -101,10 +101,11 @@ class StarData:
             first_row = result_df[result_df["id"]
                                   == self.constellations[edge[0]]]
             second_row = result_df[result_df["id"]
-                                   == self.constellations[edge[0]]]
-            ax.plot([first_row["x"].iloc[0], second_row["x"].iloc[0]], [
-                    first_row["y"].iloc[0], second_row["y"].iloc[0]], 'b-', color = "white")
-            
+                                   == self.constellations[edge[1]]]
+            print(first_row)
+            print(second_row)
+            ax.plot([first_row["x"], second_row["x"]],
+                    [first_row["y"], second_row["y"]], 'b-', color="white")
 
         self.crs = mplcursors.cursor(ax, hover=2)
 
