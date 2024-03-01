@@ -87,12 +87,13 @@ def getspecifics(id):
     info['madeof'] = specs[0][2][2]
     info['numberofstars'] = str(len(specs))
     name = df_grouped['name'][id]
+    if (name.isspace()):
+        name = 'unnamed'
     info['name'] = name
     distance = 3.26/(df_grouped['Parallax'][id])
     if (not distance == np.nan):
         distance = 'unknown'
     info['distance'] =  distance
-
     return info
 
 def printinfo(info):
@@ -116,17 +117,18 @@ def dissectspectraltype(spectraltypefull):
     typeinfo = spectraltypeinfo(spectraltype)
     spectraltypefull = spectraltypefull[maintypeindex+1:len(spectraltypefull)]
     Wilson = ''
-    if (Mounttype[0] == 's'):
-        Wilson = 'sub'
-        Mounttype = Mounttype[1:i]
-    if (Mounttype[0] == 'g'):
-        Wilson = Wilson + 'giant'
-    elif (Mounttype[0] == 'd'):
-        Wilson = Wilson + 'dwarf' 
-    elif (Mounttype[0] == 'c'):
-        Wilson = 'supergiant'
-    if (Mounttype[len(Mounttype) - 1] == ':'):
-        Wilson = Wilson + ' (uncertain)'
+    if(not Mounttype == ''):
+        if (Mounttype[0] == 's'):
+            Wilson = 'sub'
+            Mounttype = Mounttype[1:i]
+        if (Mounttype[0] == 'g'):
+            Wilson = Wilson + 'giant'
+        elif (Mounttype[0] == 'd'):
+            Wilson = Wilson + 'dwarf' 
+        elif (Mounttype[0] == 'c'):
+            Wilson = 'supergiant'
+        if (Mounttype[len(Mounttype) - 1] == ':'):
+            Wilson = Wilson + ' (uncertain)'
     i = 0
     luminosityindex = 0
     while i < len(spectraltypefull):
@@ -209,4 +211,4 @@ def romantoclass(roman):
         luminosityclass += 'a luminous supergiant'
     return luminosityclass
 
-print(printinfo(getspecifics(1)))
+print(printinfo(getspecifics(36)))
