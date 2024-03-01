@@ -67,7 +67,7 @@ def getspecifics(id):
         'type': 'unknown', 'spectraltype' : 'unknown', 
         'color' : 'unknown', 'temperature' : 'unknown',
         'madeof' : 'unknown', 'name' : 'unknown',
-        'distance' : 'unknown', 'numberofstars' : '1'
+        'numberofstars' : '1'
     }
     df = get_star_data_df()
     df_grouped = df.set_index(['id'])
@@ -89,13 +89,6 @@ def getspecifics(id):
     if (name.isspace()):
         name = 'unnamed'
     info['name'] = name
-    distacne = ''
-    parallax = (df_grouped['Parallax'][id])
-    if (parallax.isnumeric()):
-        distance = str(int(3.26/(df_grouped['Parallax'][id]))) + ' lightyears'
-    else:
-        distance = 'unknown'
-    info['distance'] =  distance
     return info
 
 def printinfo(info):
@@ -216,5 +209,3 @@ def romantoclass(roman):
     elif (roman == 'Ia'):
         luminosityclass += 'luminous supergiant'
     return luminosityclass
-
-print(printinfo(getspecifics(5)))
