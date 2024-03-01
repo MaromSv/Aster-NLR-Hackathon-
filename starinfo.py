@@ -89,8 +89,8 @@ def getspecifics(id):
     if (name.isspace()):
         name = 'unnamed'
     info['name'] = name
-    distance = 3.26/(df_grouped['Parallax'][id])
-    if (not distance == np.nan):
+    distance = str(int(3.26/(df_grouped['Parallax'][id]))) + ' lightyears'
+    if (distance == np.nan):
         distance = 'unknown'
     info['distance'] =  distance
     return info
@@ -214,4 +214,4 @@ def romantoclass(roman):
         luminosityclass += 'luminous supergiant'
     return luminosityclass
 
-print(printinfo(getspecifics(337)))
+print(printinfo(getspecifics(5)))
