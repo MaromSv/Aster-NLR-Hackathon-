@@ -69,24 +69,31 @@ def plotUserInput(user_vertices, user_edges):
 
 #TODO: Get input from UI
 user_vertices, user_edges = getUserInput()
-def findConstellation(starsx, starsy, threshhold):
+def findConstellation(starsx, starsy, ids, threshhold):
 
     coordinates = list(zip(starsx, starsy))
+
+    # Combine coordinates with IDs
+    coordinates_with_ids = list(zip(starsx, starsy, ids))
 
     #Effecient Data Structure
     tree = cKDTree(coordinates)
 
-    coordinatePairs = combinations(coordinates, 2)
+    # Generate combinations of coordinate pairs with IDs
+    coordinatePairs = combinations(coordinates_with_ids, 2)
 
     best_length = float("inf")
 
     possible_constelations = []
     for coordates in coordinatePairs:
         possible_constelation = []
+        possible_constelation_ids = []
         coord_first = np.array([coordates[0][0], coordates[0][1]])
         coord_second = np.array([coordates[1][0], coordates[1][1]])
         possible_constelation.append(coord_first)
         possible_constelation.append(coord_second)
+        possible_constelation_ids.append(coordates[0][2])
+        possible_constelation_ids.append(coordates[0][2])
 
         distance = euclideanDistance(coord_first, coord_second)
         pair_vector = coord_second - coord_first
@@ -108,17 +115,23 @@ def findConstellation(starsx, starsy, threshhold):
             # Query the kd-tree for the nearest neighbor to the target point
             nearby_point_indices = tree.query_ball_point(centroid, threshhold)
 
+            
             # Get the nearby points
-            nearby_points = [np.array(coordinates[i])
-                            for i in nearby_point_indices]
+            nearby_points = np.array([coordinates[i] for i in nearby_point_indices])
+
+            # print(nearby_points)
+            # print(centroid)
 
             # Compute their distances
-            distances = [euclideanDistance(point, centroid)
-                        for point in nearby_points]
+            distances = np.array([euclideanDistance(point, centroid) for point in nearby_points])
 
-            # Sort the list
+            # Sort the nearby point indices based on distances
             sorted_indices = np.argsort(distances)
-            sorted_nearby_points = [nearby_points[i] for i in sorted_indices]
+            sorted_nearby_point_indices = [nearby_point_indices[i] for i in sorted_indices]
+
+            # Now you have sorted indices corresponding to the nearby points
+            # You can access the sorted nearby points using these indices
+            sorted_nearby_points = nearby_points[sorted_indices]
 
             new_sorted_nearby_points = []
             for index, point in enumerate(sorted_nearby_points):
@@ -144,14 +157,15 @@ def findConstellation(starsx, starsy, threshhold):
                 if (totalDistance > best_length):
                     break
                 possible_constelation.append(nearest_point)
+                possible_constelation_ids.append(sorted_nearby_point_indices[0])
 
             if counter == len(user_vertices) - 1:
                 possible_constelations.append(
-                    (possible_constelation, totalDistance))
+                    (possible_constelation, totalDistance, possible_constelation_ids))
                 best_length = totalDistance
 
 
-    print(len(possible_constelations))
+    # print(len(possible_constelations))
     possible_constelations
 
 
@@ -160,42 +174,48 @@ def findConstellation(starsx, starsy, threshhold):
 
     # First value will have minimum total distance
     final_constellation = possible_constelations[0]
-    return final_constellation
+    final_constellation_ids = final_constellation[2]
+    return final_constellation, final_constellation_ids
 
-num_points = 100
-np.random.seed(1)
-starsx = np.random.rand(num_points) * 10
-starsy = np.random.rand(num_points) * 10
 
-final_constellation = findConstellation(starsx, starsy, 1)
 
-print(final_constellation)
 
-# Extract coordinates from the data
-constellation_coordinates = []
-for item in final_constellation[0]:
-    if isinstance(item, tuple):
-        constellation_coordinates.append(item)
-    else:
-        constellation_coordinates.append(item.tolist())
+# num_points = 100
+# np.random.seed(1)
+# ids = np.arange(num_points)
+# starsx = np.random.rand(num_points) * 10
+# starsy = np.random.rand(num_points) * 10
 
-# Split the coordinates into x and y arrays
-x_constellation = [coord[0] for coord in constellation_coordinates]
-y_constellation = [coord[1] for coord in constellation_coordinates]
+# final_constellation, final_constellation_ids = findConstellation(starsx, starsy, ids, 1)
 
-# Plot the closest match in a separate window
-plt.figure()
-plt.scatter(starsx, starsy, color='blue',
-            marker='o', label='Random Points', alpha=0.5, s=3)
-for edge in user_edges:
-    plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
-             [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
-plt.plot([x_constellation[0], x_constellation[1]], [
-         y_constellation[0], y_constellation[1]], color='black',  label='First edge')
-plt.title('Closest Match to User Shape')
-plt.xlabel('X-axis')
-plt.ylabel('Y-axis')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.grid(True)
-plt.legend()
-plt.show()
+# # print(final_constellation)
+# # print(final_constellation_ids)
+
+# # Extract coordinates from the data
+# constellation_coordinates = []
+# for item in final_constellation[0]:
+#     if isinstance(item, tuple):
+#         constellation_coordinates.append(item)
+#     else:
+#         constellation_coordinates.append(item.tolist())
+
+# # Split the coordinates into x and y arrays
+# x_constellation = [coord[0] for coord in constellation_coordinates]
+# y_constellation = [coord[1] for coord in constellation_coordinates]
+
+# # Plot the closest match in a separate window
+# plt.figure()
+# plt.scatter(starsx, starsy, color='blue',
+#             marker='o', label='Random Points', alpha=0.5, s=3)
+# for edge in user_edges:
+#     plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
+#              [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
+# plt.plot([x_constellation[0], x_constellation[1]], [
+#          y_constellation[0], y_constellation[1]], color='black',  label='First edge')
+# plt.title('Closest Match to User Shape')
+# plt.xlabel('X-axis')
+# plt.ylabel('Y-axis')
+# plt.gca().set_aspect('equal', adjustable='box')
+# plt.grid(True)
+# plt.legend()
+# plt.show()
