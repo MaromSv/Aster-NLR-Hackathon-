@@ -5,6 +5,8 @@ import ephem
 
 #from algorithm import stars
 stars = [278.3470833333333, 278.2079166666667, 278.83874999999995, 278.75999999999993]
+longitude = 4.84357
+lattitude = 52.34523
 
 def degrees_to_radians(x):
     radians = math.radians(x)
@@ -36,7 +38,7 @@ def average_times_of_day(x):
 
 const_avg_time = average_times_of_day(stars)
 
-Long = 4.843578815460205      #Longitude of location in question
+Long = longitude      #Longitude of location in question
 LongDeg = int(Long)
 LongMin = (Long - int(Long))*60
 LongSec = (LongMin - int(LongMin))*60
@@ -92,8 +94,8 @@ while True:
     twilight.date = culmination_time.replace(hour=12, minute=0, second=0)
 
     #Location of Fredericton, Canada
-    twilight.lon  = str(4.84357)       #Note that lon should be in string format
-    twilight.lat  = str(52.34523)      #Note that lat should be in string format
+    twilight.lon  = str(longitude)       #Note that lon should be in string format
+    twilight.lat  = str(lattitude)      #Note that lat should be in string format
     twilight.elev = 0
     twilight.pressure= 0
     twilight.horizon = '-0:34'
