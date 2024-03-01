@@ -47,11 +47,9 @@ class StarGenerator(ctk.CTkToplevel):
 
         # Convert to list
         vertex_lists = np.array([[vertex.x, vertex.y] for vertex in verticies])
-        print(vertex_lists)
         # Convert Edge objects to lists
         edge_lists = np.array(
             [[edge.vertex1.index, edge.vertex2.index] for edge in edges])
-        print(edge_lists)
 
         # Get x and y coordinates of plotted stars
         self.starData.elev = self.elevation
@@ -63,8 +61,6 @@ class StarGenerator(ctk.CTkToplevel):
         ids = visible['id'].tolist()
 
         # Call Algorithm
-
-        print(edge_lists)
         self.fig, final_constellation_with_ids = findConstellation(
             starx, stary, ids, vertex_lists, edge_lists)
 
@@ -72,7 +68,6 @@ class StarGenerator(ctk.CTkToplevel):
         final_constellation_ids = final_constellation_with_ids[2]
 
         self.starData.user_edges = edge_lists
-        print(final_constellation_ids)
         self.starData.constellations = final_constellation_ids
 
         # self.fig = self.starData.get_plot(result_df, visible)
