@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from dataclasses import dataclass
 from PIL import Image, ImageTk
-import numpy
+import cities
 
 from starGeneratorGui import StarGenerator
 
@@ -65,15 +65,15 @@ class skyScribbler:
                                width=250,
                                height=40,
                                command=self.clearCanvas)
-        self.buttonClearCanvas.place(relx=0.025,rely=0.95)
+        self.buttonClearCanvas.place(relx=0.55,rely=0.95)
 
-        self.buttonClearCanvas = ctk.CTkButton(master = self.root,
+        self.buttonUndo = ctk.CTkButton(master = self.root,
                                text="Undo",
                                width=250,
                                height=40,
                                command=self.undo)
         
-        self.buttonClearCanvas.place(relx=0.025,rely=0.90)
+        self.buttonUndo.place(relx=0.55,rely=0.90)
 
         self.buttonGenerate = ctk.CTkButton(master = self.root,
                                text="Generate",
@@ -81,6 +81,13 @@ class skyScribbler:
                                height=90,
                                command=self.generate)
         self.buttonGenerate.place(relx=0.77, rely=0.90)
+
+        self.locationCombobox = ctk.CTkComboBox(master=self.root, width=400, height=40)
+        self.locationCombobox.set('Amsterdam')
+        self.locationCombobox.place(relx=0.025, rely = 0.9)
+
+        self.locationLabel = ctk.CTkLabel(master=self.root, text='52.3676° N, 4.9041° E')
+        self.locationLabel.place(relx=0.025, rely=0.95)
 
         # Drawing canvas
         self.canvas = ctk.CTkCanvas(master=self.frame, height= self.root.winfo_height()*0.775,

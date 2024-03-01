@@ -1,4 +1,4 @@
-from algorithm import algorithm
+#from algorithm import algorithm
 from data import get_star_data_df
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
