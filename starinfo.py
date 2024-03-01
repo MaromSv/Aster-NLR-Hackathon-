@@ -90,8 +90,8 @@ def getspecifics(id):
         name = 'unnamed'
     info['name'] = name
     distacne = ''
-    a = 3.26/(df_grouped['Parallax'][id])
-    if (a.isnumeric()):
+    parallax = (df_grouped['Parallax'][id])
+    if (parallax.isnumeric()):
         distance = str(int(3.26/(df_grouped['Parallax'][id]))) + ' lightyears'
     else:
         distance = 'unknown'
