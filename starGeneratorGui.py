@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from stardata import StarData
+from algorithm import findConstellation
 
 
 class StarGenerator(ctk.CTkToplevel):
