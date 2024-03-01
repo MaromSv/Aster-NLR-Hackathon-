@@ -2,13 +2,13 @@ import numpy as np
 import pandas as pd
 import matplotlib
 import seaborn as sns
-from data import get_data_fast
+from data import get_star_data_df
 
-df = get_data_fast()
-print(df.set_index(['id'])['spectral_type_full'][31:36])
+df = get_star_data_df()
+print(df.set_index(['id'])['n_spectral_type'][2565:2575])
 
 def getinfo(winnerids):
-    df = get_data_fast()
+    df = get_star_data_df()
     names = []
     distances = []
     spectraltypes = []
@@ -27,6 +27,9 @@ def getinfo(winnerids):
 
 def spectraltypeinfo(type):
     spectraltypeinfo = []
+    color
+    temperature
+    madeof
     if (type == 'O'):
         color = 'blue'
         temperature = '> 30000'
@@ -71,10 +74,126 @@ def spectraltypeinfo(type):
     return spectraltypeinfo
 
 def getvisibility(id):
-    df = get_data_fast()
+    df = get_star_data_df()
     df_grouped = df.groupby(['id'])
     luminosity = df_grouped['Vmag'][id]
     visible = df_grouped['BV'][id]
     visibility = luminosity * visible
     return visibility
 
+def getspecifics(id):
+    info = []
+    df = get_star_data_df()
+    df_grouped = df.groupby(['id'])
+    spectraltypefull = df_grouped['spectral_type_full']
+    specs = dissectspectraltype(spectraltypefull)
+    info.append(specs)
+    name = df_grouped['name'][id]
+    info.append(name)
+    distance = 3.26/(df_grouped['Parallax'][id])
+    info.append(distance)
+
+    return info
+
+def dissectspectraltype(spectraltypefull):
+    maintypeindex = 0
+    maintypes = ['O', 'B', 'A', 'F', 'G', 'K', 'M']
+    stars = 1
+    i = 0
+    while i < len(spectraltypefull):
+        if (spectraltypefull[i] in maintypes):
+            maintypeindex = i
+            break
+        i = i + 1
+    Mounttype = spectraltypefull[0:maintypeindex]
+    spectraltype = spectraltypefull[maintypeindex]
+    typeinfo = spectraltypeinfo(spectraltype)
+    spectraltypefull = spectraltypefull[maintypeindex+1:len(spectraltypefull)]
+    Wilson = ''
+    if (Mounttype[0] == 's'):
+        Wilson = 'sub'
+        Mounttype = Mounttype[1:i]
+    if (Mounttype[0] == 'g'):
+        Wilson = Wilson + 'giant'
+    elif (Mounttype[0] == 'd'):
+        Wilson = Wilson + 'dwarf' 
+    elif (Mounttype[0] == 'c'):
+        Wilson = 'supergiant'
+    if (Mounttype[len(Mounttype)] == ':'):
+        Wilson = Wilson + ' (uncertain)'
+    i = 0
+    luminosityindex = 0
+    while i < len(spectraltypefull):
+        if (spectraltypefull[i].isnumeric()):
+            i = i + 1
+        if (spectraltypefull[i] in ['.', '-']):
+            if(spectraltypefull[i+1].isnumeric()):
+                i = i + 2
+        if (spectraltypefull[i] == '+'):
+            stars = stars + 1
+        luminosityindex = i
+        break
+    spectralsubclass = spectraltypefull[0:luminosityindex]
+    spectraltypefull = spectraltypefull[luminosityindex:len(spectraltypefull)]
+    luminosityclasses = ['I', 'V', '-', '/', 'a', 'b']
+    end = 0
+    i = 0
+    while i < len(spectraltypefull):
+        if (spectraltypefull[i] in luminosityclasses):
+            i = i + 1
+        if (spectraltypefull[i] == '+'):
+            stars = stars + 1
+        end = i
+        break
+    luminositiyclass = spectraltypefull[0:end]
+    multiclass = False
+    seperatorindex = 0
+    i = 0
+    while i < len(luminositiyclass):
+        if (luminositiyclass[i] in ['-', '/']):
+            multiclass = True
+            seperatorindex = i
+        i = i + 1
+    if (multiclass):
+        class1 = romantoclass(luminositiyclass[0:seperatorindex])
+        class2 = romantoclass(luminositiyclass[seperatorindex + 1:len(luminositiyclass)])
+        if (luminositiyclass[seperatorindex] == '-'):
+            luminositiyclass = 'between ' + class1 + ' and ' + class2
+        else:
+            luminositiyclass = class1 + ' or ' + class2
+    else:
+        luminositiyclass = romantoclass(luminositiyclass)
+    spectraltypefull = spectraltypefull[end:len(spectraltypefull)]
+    if (stars == 1):
+        i = 0
+        while i < len(spectraltypefull):
+            if (spectraltypefull[i] == '+'):
+                stars = stars + 1
+                break
+            i = i + 1
+    starinfo = []
+    starinfo.append(Wilson, spectraltype, typeinfo, spectralsubclass, luminositiyclass)
+    specs = []
+    specs.append(starinfo)
+    if (stars > 1):
+        dissectspectraltype(spectraltypefull)
+    return specs
+
+def romantoclass(roman):
+    if (roman == 'V'):
+        luminosityclass = 'a main-sequence star'
+    elif (roman == 'IV'):
+        luminosityclass = 'a subgiant'
+    elif (roman == 'III'):
+        luminosityclass = 'a normal giant'
+    elif (roman == 'II'):
+        luminosityclass = 'a bright giant'
+    elif (roman == 'I'):
+        luminosityclass = 'a supergiant'
+    elif (roman == 'Ib'):
+        luminosityclass = 'a less luminous supergiant'
+    elif (roman == 'Iab'):
+        luminosityclass = 'an intermediate-size supergiant'
+    elif (roman == 'Ia'):
+        luminosityclass = 'a luminous supergiant'
+    return luminosityclass
