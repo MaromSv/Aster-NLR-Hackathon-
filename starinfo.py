@@ -197,21 +197,21 @@ def dissectspectraltype(spectraltypefull):
 def romantoclass(roman):
     luminosityclass = ''
     if (roman == 'V'):
-        luminosityclass += 'a main-sequence star'
+        luminosityclass += 'main-sequence star'
     elif (roman == 'IV'):
-        luminosityclass += 'a subgiant'
+        luminosityclass += 'subgiant'
     elif (roman == 'III'):
-        luminosityclass += 'a normal giant'
+        luminosityclass += 'normal giant'
     elif (roman == 'II'):
-        luminosityclass += 'a bright giant'
+        luminosityclass += 'bright giant'
     elif (roman == 'I'):
-        luminosityclass += 'a supergiant'
+        luminosityclass += 'supergiant'
     elif (roman == 'Ib'):
-        luminosityclass += 'a less luminous supergiant'
+        luminosityclass += 'less luminous supergiant'
     elif (roman == 'Iab'):
-        luminosityclass += 'an intermediate-size supergiant'
+        luminosityclass += 'intermediate-size supergiant'
     elif (roman == 'Ia'):
-        luminosityclass += 'a luminous supergiant'
+        luminosityclass += 'luminous supergiant'
     return luminosityclass
 
 print(printinfo(getspecifics(337)))
