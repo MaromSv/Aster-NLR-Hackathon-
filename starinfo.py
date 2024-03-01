@@ -90,7 +90,10 @@ def getspecifics(id):
     return info
 
 def printinfo(info):
-    [print(keys + ': ' + info[keys]) for keys in info]
+    message = ''
+    for keys in info:
+        message += keys + ': ' + info[keys] + '\n'
+    return message
 
 def dissectspectraltype(spectraltypefull):
     maintypeindex = 0
