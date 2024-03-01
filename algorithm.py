@@ -61,107 +61,114 @@ def plotUserInput(user_vertices, user_edges):
     plt.show()
 
 
-user_vertices, user_edges = getUserInput()
+
+
+
 # plotUserInput(user_vertices, user_edges)
 # # Generate random points
-num_points = 500
-np.random.seed(5)
 
+#TODO: Get input from UI
+user_vertices, user_edges = getUserInput()
+def findConstellation(starsx, starsy, threshhold):
 
-x_values = np.random.rand(num_points) * 10
-y_values = np.random.rand(num_points) * 10
+    coordinates = list(zip(starsx, starsy))
 
-coordinates = list(zip(x_values, y_values))
+    #Effecient Data Structure
+    tree = cKDTree(coordinates)
 
-tree = cKDTree(coordinates)
+    coordinatePairs = combinations(coordinates, 2)
 
+    best_length = float("inf")
 
-threshold = 0.5
+    possible_constelations = []
+    for coordates in coordinatePairs:
+        possible_constelation = []
+        coord_first = np.array([coordates[0][0], coordates[0][1]])
+        coord_second = np.array([coordates[1][0], coordates[1][1]])
+        possible_constelation.append(coord_first)
+        possible_constelation.append(coord_second)
 
-coordinatePairs = combinations(coordinates, 2)
+        distance = euclideanDistance(coord_first, coord_second)
+        pair_vector = coord_second - coord_first
 
-best_length = float("inf")
+        input_distances = getLengthsOfInput(user_vertices, user_edges)
+        scale = distance / input_distances[0]  # Calculate the scale
+        rot_matrix = rot(
+            user_vertices[1] - user_vertices[0], pair_vector)
 
-possible_constelations = []
-for coordates in coordinatePairs:
-    possible_constelation = []
-    coord_first = np.array([coordates[0][0], coordates[0][1]])
-    coord_second = np.array([coordates[1][0], coordates[1][1]])
-    possible_constelation.append(coord_first)
-    possible_constelation.append(coord_second)
+        totalDistance = 0
+        for i, vertex in enumerate(user_vertices[2:]):
+            counter = i + 2
 
-    distance = euclideanDistance(coord_first, coord_second)
-    pair_vector = coord_second - coord_first
+            # input space
+            next_edge = user_vertices[counter] - user_vertices[1]
+            const_edge = next_edge@rot_matrix * scale
+            centroid = coord_second + const_edge
 
-    input_distances = getLengthsOfInput(user_vertices, user_edges)
-    scale = distance / input_distances[0]  # Calculate the scale
-    rot_matrix = rot(
-        user_vertices[1] - user_vertices[0], pair_vector)
+            # Query the kd-tree for the nearest neighbor to the target point
+            nearby_point_indices = tree.query_ball_point(centroid, threshhold)
 
-    totalDistance = 0
-    for i, vertex in enumerate(user_vertices[2:]):
-        counter = i + 2
+            # Get the nearby points
+            nearby_points = [np.array(coordinates[i])
+                            for i in nearby_point_indices]
 
-        # input space
-        next_edge = user_vertices[counter] - user_vertices[1]
-        const_edge = next_edge@rot_matrix * scale
-        centroid = coord_second + const_edge
+            # Compute their distances
+            distances = [euclideanDistance(point, centroid)
+                        for point in nearby_points]
 
-        # Query the kd-tree for the nearest neighbor to the target point
-        nearby_point_indices = tree.query_ball_point(centroid, threshold)
+            # Sort the list
+            sorted_indices = np.argsort(distances)
+            sorted_nearby_points = [nearby_points[i] for i in sorted_indices]
 
-        # Get the nearby points
-        nearby_points = [np.array(coordinates[i])
-                         for i in nearby_point_indices]
+            new_sorted_nearby_points = []
+            for index, point in enumerate(sorted_nearby_points):
+                overlap = False
+                for coordinate in possible_constelation:
+                    if euclideanDistance(point, coordinate) < 0.001:
+                        overlap = True
+                if not overlap:
+                    new_sorted_nearby_points.append(point)
 
-        # Compute their distances
-        distances = [euclideanDistance(point, centroid)
-                     for point in nearby_points]
-
-        # Sort the list
-        sorted_indices = np.argsort(distances)
-        sorted_nearby_points = [nearby_points[i] for i in sorted_indices]
-
-        new_sorted_nearby_points = []
-        for index, point in enumerate(sorted_nearby_points):
-            overlap = False
-            for coordinate in possible_constelation:
-                if euclideanDistance(point, coordinate) < 0.001:
-                    overlap = True
-            if not overlap:
-                new_sorted_nearby_points.append(point)
-
-        # print("constellation", possible_constelation)
-        # print("nearby point", new_sorted_nearby_points)
-        if len(new_sorted_nearby_points) == 0:
-            break
-
-        nearest_point = new_sorted_nearby_points[0]
-        distance = euclideanDistance(nearest_point, centroid)
-
-        if distance > threshold:
-            break  # Point is too far away
-        else:
-            totalDistance += distance
-            if (totalDistance > best_length):
+            # print("constellation", possible_constelation)
+            # print("nearby point", new_sorted_nearby_points)
+            if len(new_sorted_nearby_points) == 0:
                 break
-            possible_constelation.append(nearest_point)
 
-        if counter == len(user_vertices) - 1:
-            possible_constelations.append(
-                (possible_constelation, totalDistance))
-            best_length = totalDistance
+            nearest_point = new_sorted_nearby_points[0]
+            distance = euclideanDistance(nearest_point, centroid)
+
+            if distance > threshhold:
+                break  # Point is too far away
+            else:
+                totalDistance += distance
+                if (totalDistance > best_length):
+                    break
+                possible_constelation.append(nearest_point)
+
+            if counter == len(user_vertices) - 1:
+                possible_constelations.append(
+                    (possible_constelation, totalDistance))
+                best_length = totalDistance
 
 
-print(len(possible_constelations))
-possible_constelations
+    print(len(possible_constelations))
+    possible_constelations
 
 
-sorted_posible_constelations = sorted(
-    possible_constelations, key=lambda x: x[1])
+    sorted_posible_constelations = sorted(
+        possible_constelations, key=lambda x: x[1])
 
-# First value will have minimum total distance
-final_constellation = possible_constelations[0]
+    # First value will have minimum total distance
+    final_constellation = possible_constelations[0]
+    return final_constellation
+
+num_points = 100
+np.random.seed(1)
+starsx = np.random.rand(num_points) * 10
+starsy = np.random.rand(num_points) * 10
+
+final_constellation = findConstellation(starsx, starsy, 1)
+
 print(final_constellation)
 
 # Extract coordinates from the data
@@ -178,7 +185,7 @@ y_constellation = [coord[1] for coord in constellation_coordinates]
 
 # Plot the closest match in a separate window
 plt.figure()
-plt.scatter(x_values, y_values, color='blue',
+plt.scatter(starsx, starsy, color='blue',
             marker='o', label='Random Points', alpha=0.5, s=3)
 for edge in user_edges:
     plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
@@ -192,14 +199,3 @@ plt.gca().set_aspect('equal', adjustable='box')
 plt.grid(True)
 plt.legend()
 plt.show()
-
-
-# # Function to compute the Hausdorff distance between two shapes
-# def hausdorff_distance(shape1, shape2):
-#     return max(np.min(np.linalg.norm(shape1 - point, axis=1)) for point in shape2)
-
-# # Normalize shape vertices
-# def normalize_shape(shape):
-#     centroid = np.mean(shape, axis=0)
-#     max_distance = np.max(np.linalg.norm(shape - centroid, axis=1))
-#     return (shape - centroid) / max_distance

@@ -1,9 +1,13 @@
+from algorithm import algorithm
 from data import get_star_data_df
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.figure import Figure
+import mplcursors
+from mpl_interactions import ioff, panhandler, zoom_factory
+
 pd.plotting.register_matplotlib_converters()
 
 
@@ -81,6 +85,7 @@ class StarData:
     def get_plot(self, result_df, visible):
 
         fig = Figure(figsize=(11.5, 6.5), tight_layout=True, facecolor="black")
+
         ax = fig.add_subplot(111)
         ax.set_yticklabels([])
         ax.set_xticklabels([])
@@ -88,18 +93,22 @@ class StarData:
         ax.set_facecolor('black')
 
         # Using seaborn scatterplot
-        ax.scatter(x=visible['x'], y=visible['y'],
-                   c="yellow", s=10, alpha=0.7)
-        for constel in self.constellations:
-            row = result_df[result_df["id"] == constel]
-            constel_x = row["x"].iloc[0]
-            constel_y = row["y"].iloc[0]
-            ax.plot()
+        sc = ax.scatter(x=visible['x'], y=visible['y'],
+                        c="yellow", s=10, alpha=0.7, picker=True)
 
+        self.crs = mplcursors.cursor(ax, hover=2)
+
+        self.crs.connect("add", lambda sel: sel.annotation.set_text(
+            'Star #{}\nx={}, y={}'.format(sel.index, sel.target[0], sel.target[1])))
+
+        disconnect_zoom = zoom_factory(ax)
+        pan_handler = panhandler(fig)
         plt.show()
+
         return fig
 
+    def figureLeave(self, event):
+        self.crs.visible = False
 
-# star_data = StarData()
-
-# star_data.draw_canvas()
+    def figureEnter(self, event):
+        self.crs.visible = True
