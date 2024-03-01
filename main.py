@@ -26,7 +26,7 @@ class starScribbler:
         self.toplevel_window = None
 
         # Custom Tkinter settings
-        ctk.set_appearance_mode("System")
+        ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
         self.root = ctk.CTk()
         self.root.geometry("1200x1000")
