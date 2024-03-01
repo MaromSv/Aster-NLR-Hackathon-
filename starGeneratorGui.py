@@ -44,7 +44,7 @@ class StarGenerator(ctk.CTkToplevel):
         data.elev = self.elevation
         data.az = self.azimuth
         result_df, visible = data.get_visible()
-        fig = data.get_plot()
+        fig = data.get_plot(result_df, visible)
 
         canvas = FigureCanvasTkAgg(fig, master=self.root)
         canvas.draw()
