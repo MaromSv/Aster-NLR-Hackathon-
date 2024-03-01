@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.figure import Figure 
 pd.plotting.register_matplotlib_converters()
+from algorithm import algorithm
 
 
 def get_values(coord):
