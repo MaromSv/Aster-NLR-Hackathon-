@@ -22,6 +22,7 @@ class StarData:
         series = self.stars.coord.apply(get_values)
         self.positions = np.array(series.tolist())
         self.constellations = []
+        self.user_edges = []
         # put these as parameters
         self.fov = 90
         self.az = 45
@@ -93,8 +94,13 @@ class StarData:
         ax.set_facecolor('black')
 
         # Using seaborn scatterplot
-        sc = ax.scatter(x=visible['x'], y=visible['y'],
-                        c="yellow", s=10, alpha=0.7, picker=True)
+        ax.scatter(x=visible['x'], y=visible['y'],
+                   c="yellow", s=10, alpha=0.7, picker=True)
+        for edge in self.user_edges:
+            first_row = result_df[result_df["id"] == edge[0]]
+            second_row = result_df[result_df["id"] == edge[0]]
+            ax.plot([first_row["x"].iloc[0], second_row["x"].iloc[0]], [
+                    first_row["y"].iloc[0], second_row["y"].iloc[0]], 'b-')
 
         self.crs = mplcursors.cursor(ax, hover=2)
 
