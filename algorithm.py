@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from itertools import combinations
 from scipy.spatial import cKDTree
 from linalg import *
+import mplcursors
+from mpl_interactions import ioff, panhandler, zoom_factory
+import starinfo
+from matplotlib.figure import Figure
 
 
 def getUserInput():
@@ -178,24 +182,29 @@ def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold
     x_constellation = [coord[0] for coord in final_constellation[0]]
     y_constellation = [coord[1] for coord in final_constellation[0]]
 
-    # Plot the closest match in a separate window
-    fig = plt.figure(figsize=(7, 7), tight_layout=True, facecolor="black")
-    ax = fig.gca()
+    fig = Figure(figsize=(11.5, 6.5), tight_layout=True, facecolor="black")
 
-    ax.scatter(x=starsx, y=starsy,
-               c="yellow", s=10, alpha=0.7, picker=True)
-
-    for edge in user_edges:
-        ax.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
-                [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-', color="white")
-
+    ax = fig.add_subplot(111)
     ax.set_yticklabels([])
     ax.set_xticklabels([])
     ax.tick_params(left=False, bottom=False)
     ax.set_facecolor('black')
-    ax.set_aspect('equal', adjustable='box')
-    ax.grid(False)
 
+    # Using seaborn scatterplot
+    ax.scatter(x=starsx, y=starsy,
+                c="yellow", s=10, alpha=0.7, picker=True)
+    
+    for edge in user_edges:
+        ax.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
+                [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-', color="white")
+
+    #crs.connect("add", lambda sel: sel.annotation.set_text(
+    #    'Star #{}\nx={}, y={}\n{}'.format(sel.index, sel.target[0], sel.target[1], starinfo.getspecifics(1))))
+
+    disconnect_zoom = zoom_factory(ax)
+    pan_handler = panhandler(fig)
+
+    plt.show()
     return fig, final_constellation
 
 
