@@ -97,8 +97,10 @@ class StarData:
         ax.scatter(x=visible['x'], y=visible['y'],
                    c="yellow", s=10, alpha=0.7, picker=True)
         for edge in self.user_edges:
-            first_row = result_df[result_df["id"] == edge[0]]
-            second_row = result_df[result_df["id"] == edge[0]]
+            first_row = result_df[result_df["id"]
+                                  == self.constellations[edge[0]]]
+            second_row = result_df[result_df["id"]
+                                   == self.constellations[edge[0]]]
             ax.plot([first_row["x"].iloc[0], second_row["x"].iloc[0]], [
                     first_row["y"].iloc[0], second_row["y"].iloc[0]], 'b-')
 
