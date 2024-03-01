@@ -93,7 +93,7 @@ def findConstellation(starsx, starsy, ids, threshhold):
         possible_constelation.append(coord_first)
         possible_constelation.append(coord_second)
         possible_constelation_ids.append(coordates[0][2])
-        possible_constelation_ids.append(coordates[0][2])
+        possible_constelation_ids.append(coordates[1][2])
 
         distance = euclideanDistance(coord_first, coord_second)
         pair_vector = coord_second - coord_first
