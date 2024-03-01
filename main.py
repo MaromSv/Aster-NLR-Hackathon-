@@ -10,7 +10,7 @@ import numpy
 
 from starGeneratorGui import StarGenerator
 
-class starScribbler:
+class skyScribbler:
 
     """
     Main window rendering.
@@ -30,11 +30,11 @@ class starScribbler:
         ctk.set_default_color_theme("blue")
         self.root = ctk.CTk()
         self.root.geometry("1200x1000")
-        self.root.title("Star Scribbler")
+        self.root.title("Sky Scribbler")
         self.root.update()
 
         # Title label
-        self.labelTitle = ctk.CTkLabel(master=self.root, text="Star Scribbler", font=('TkDefaultFont', 80))
+        self.labelTitle = ctk.CTkLabel(master=self.root, text="Sky Scribbler", font=('TkDefaultFont', 80))
         self.labelTitle.place(relx=0.3, rely=0)
 
         self.frame = ctk.CTkFrame(master=self.root,
@@ -237,4 +237,4 @@ class Graph:
         return distances.index(min(distances))
 
 if __name__ == "__main__":        
-    CTK_Window = starScribbler()
+    CTK_Window = skyScribbler()
