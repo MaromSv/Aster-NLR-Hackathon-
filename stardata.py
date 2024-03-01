@@ -3,6 +3,7 @@ from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.figure import Figure 
 pd.plotting.register_matplotlib_converters()
 
 
@@ -12,12 +13,12 @@ def get_values(coord):
 
 class StarData:
     def __init__(self):
-        stars = get_data_fast()
+        stars = get_star_data_df()
 
         series = stars.coord.apply(get_values)
         self.positions = np.array(series.tolist())
 
-    def draw_canvas(self):
+    def get_plot(self):
         near = 0.1
         far = 1
         fov = 90
@@ -69,11 +70,17 @@ class StarData:
                                                                      & (result_df["x"] < 1)) & ((result_df["y"] > -1) & (result_df["y"] < 1))
         visible = result_df[in_frame]
 
-        plt.figure(figsize=(10, 6))
-        ax = plt.subplot(111, projection='aitoff')
+        fig = Figure(figsize = (8, 6), dpi = 100)
+        ax = fig.add_subplot(111)
         ax.grid(True)
 
         # Using seaborn scatterplot
         sc = ax.scatter(x=visible['x'], y=visible['y'],
                         c="yellow", s=10, alpha=0.7)
         plt.show()
+        return fig
+
+
+# star_data = StarData()
+
+# star_data.draw_canvas()

@@ -9,10 +9,25 @@ def getUserInput():
     # Define the adjacency matrix of the user shape
 
     # Convert the adjacency matrix to edges
-    user_edges = [(0, 1), (1, 2), (2, 3), (3, 0)]
+    user_edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 0)]
 
     # Define the vertices of the user shape
-    user_vertices = np.array([(1, 1), (1, 2), (2, 2), (2, 1)])
+    user_vertices = np.array(
+        [(1, 1), (3, 3), (5, 1), (4, 1), (4, -2), (2, -2), (2, 1)])
+
+    # user_edges = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5),
+    #               (5, 6), (6, 7), (7, 8), (8, 9), (9, 0)]
+
+    # user_vertices = np.array([(31, -95),
+    #                           (-31, -95),
+    #                           (-81, -59),
+    #                           (-100, 0),
+    #                           (-81, 59),
+    #                           (-31, 95),
+    #                           (31, 95),
+    #                           (81, 59),
+    #                           (100, 0),
+    #                           (81, -59)])
 
     return user_vertices, user_edges
 
@@ -47,10 +62,10 @@ def plotUserInput(user_vertices, user_edges):
 
 
 user_vertices, user_edges = getUserInput()
-
+# plotUserInput(user_vertices, user_edges)
 # # Generate random points
-num_points = 50
-np.random.seed(12)
+num_points = 500
+np.random.seed(5)
 
 
 x_values = np.random.rand(num_points) * 10
@@ -65,6 +80,8 @@ threshold = 0.5
 
 coordinatePairs = combinations(coordinates, 2)
 
+best_length = float("inf")
+
 possible_constelations = []
 for coordates in coordinatePairs:
     possible_constelation = []
@@ -74,17 +91,19 @@ for coordates in coordinatePairs:
     possible_constelation.append(coord_second)
 
     distance = euclideanDistance(coord_first, coord_second)
+    pair_vector = coord_second - coord_first
 
     input_distances = getLengthsOfInput(user_vertices, user_edges)
     scale = distance / input_distances[0]  # Calculate the scale
-    rot_matrix = get_rotation(
-        user_vertices[1] - user_vertices[0], coord_second - coord_first, input_distances[0], distance)
+    rot_matrix = rot(
+        user_vertices[1] - user_vertices[0], pair_vector)
+
+    totalDistance = 0
     for i, vertex in enumerate(user_vertices[2:]):
-        coord_first = coord_second
         counter = i + 2
 
         # input space
-        next_edge = user_vertices[counter] - user_vertices[counter - 1]
+        next_edge = user_vertices[counter] - user_vertices[1]
         const_edge = next_edge@rot_matrix * scale
         centroid = coord_second + const_edge
 
@@ -105,9 +124,12 @@ for coordates in coordinatePairs:
 
         new_sorted_nearby_points = []
         for index, point in enumerate(sorted_nearby_points):
+            overlap = False
             for coordinate in possible_constelation:
-                if not np.array_equal(point, coordinate):
-                    new_sorted_nearby_points.append(point)
+                if euclideanDistance(point, coordinate) < 0.001:
+                    overlap = True
+            if not overlap:
+                new_sorted_nearby_points.append(point)
 
         # print("constellation", possible_constelation)
         # print("nearby point", new_sorted_nearby_points)
@@ -120,51 +142,31 @@ for coordates in coordinatePairs:
         if distance > threshold:
             break  # Point is too far away
         else:
+            totalDistance += distance
+            if (totalDistance > best_length):
+                break
             possible_constelation.append(nearest_point)
-            coord_second = np.array(nearest_point)
 
         if counter == len(user_vertices) - 1:
-            possible_constelations.append(possible_constelation)
+            possible_constelations.append(
+                (possible_constelation, totalDistance))
+            best_length = totalDistance
 
 
 print(len(possible_constelations))
-print(possible_constelations)
-
-# TODO: Find best of the possible constelations
-
-# # Find the closest match among the random points
-# best_match_distance = float('inf')
-# best_match_points = None
-
-# # Generate all possible combinations of vertices for the candidate shapes
-# candidate_vertex_combinations = combinations(zip(x_values, y_values), len(user_vertices))
-
-# # Normalize user shape vertices
-# user_normalized = normalize_shape(user_vertices)
-
-# for candidate_vertices in candidate_vertex_combinations:
-#     candidate_shape = np.array(list(candidate_vertices))
-#     # Normalize candidate shape vertices
-#     candidate_normalized = normalize_shape(candidate_shape)
-#     # Connect the last vertex back to the first one to close the shape
-#     candidate_shape = np.vstack((candidate_shape, candidate_shape[0]))
-#     # Calculate Hausdorff distance between normalized shapes
-#     distance = hausdorff_distance(user_normalized, candidate_normalized)
-#     if distance < best_match_distance:
-#         best_match_distance = distance
-#         best_match_points = candidate_shape
+possible_constelations
 
 
+sorted_posible_constelations = sorted(
+    possible_constelations, key=lambda x: x[1])
+
+# First value will have minimum total distance
 final_constellation = possible_constelations[0]
 print(final_constellation)
 
-rot_matrix = get_rotation(
-    user_vertices[1] - user_vertices[0], final_constellation[1] - final_constellation[0], input_distances[0], distance)
-
-
 # Extract coordinates from the data
 constellation_coordinates = []
-for item in final_constellation:
+for item in final_constellation[0]:
     if isinstance(item, tuple):
         constellation_coordinates.append(item)
     else:
@@ -177,14 +179,16 @@ y_constellation = [coord[1] for coord in constellation_coordinates]
 # Plot the closest match in a separate window
 plt.figure()
 plt.scatter(x_values, y_values, color='blue',
-            marker='o', label='Random Points')
-plt.plot(x_constellation, y_constellation, color='green',
-         linestyle='-', marker='o', label='Closest Match')
+            marker='o', label='Random Points', alpha=0.5, s=3)
+for edge in user_edges:
+    plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
+             [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
 plt.plot([x_constellation[0], x_constellation[1]], [
          y_constellation[0], y_constellation[1]], color='black',  label='First edge')
 plt.title('Closest Match to User Shape')
 plt.xlabel('X-axis')
 plt.ylabel('Y-axis')
+plt.gca().set_aspect('equal', adjustable='box')
 plt.grid(True)
 plt.legend()
 plt.show()
