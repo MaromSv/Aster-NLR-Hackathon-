@@ -40,18 +40,47 @@ class StarGenerator(ctk.CTkToplevel):
         self.sliderAzimuth.place(relx=0.1, rely=0.95)
         self.sliderAzimuth.set(0)
 
+        self.starData = StarData()
         self.root.update()
-        data = StarData()
-        data.elev = self.elevation
-        data.az = self.azimuth
-        result_df, visible = data.get_visible()
-        fig = data.get_plot(result_df, visible)
+        
 
-        canvas = FigureCanvasTkAgg(fig, master=self.root)
-        canvas.draw()
-        canvas.get_tk_widget().place(relx=0.02, rely=0.025)
+    def plot(self, verticies, edges):
+       
+        #Convert to list
+        vertex_lists = np.array([[vertex.x, vertex.y] for vertex in verticies])
+        print(vertex_lists)
+        # Convert Edge objects to lists
+        edge_lists = np.array([[edge.vertex1.index, edge.vertex2.index] for edge in edges])
+        print(edge_lists)
+    
+
+        #Get x and y coordinates of plotted stars
+        self.starData.elev = self.elevation
+        self.starData.az = self.azimuth
+        result_df, visible = self.starData.get_visible()
+
+        starx = visible['x'].tolist()
+        stary = visible['y'].tolist()
+        ids = visible['id'].tolist()
+
+        #Call Algorithm
+        
+        final_constellation_with_ids = findConstellation(starx, stary, ids, vertex_lists, edge_lists)
+      
+        final_constellation = final_constellation_with_ids[0]
+        final_constellation_ids = final_constellation_with_ids[2]
+
+        self.starData.user_edges = edge_lists
+        print(final_constellation_ids)
+        self.starData.constellations = final_constellation_ids
+        
+
+        self.fig = self.starData.get_plot(result_df, visible)
+      
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().place(relx=0.02, rely=0.025)
         self.root.update()
-        self.root.mainloop()
 
     def elevationChange(self, value):
         self.elevation = value

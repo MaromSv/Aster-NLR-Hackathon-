@@ -18,6 +18,7 @@ def get_values(coord):
 class StarData:
     def __init__(self):
         self.stars = get_star_data_df()
+        # self.stars['id'] = self.stars['id'].astype(int)
 
         series = self.stars.coord.apply(get_values)
         self.positions = np.array(series.tolist())
@@ -79,7 +80,7 @@ class StarData:
                                                                      & (result_df["x"] < 1)) & ((result_df["y"] > -1) & (result_df["y"] < 1))
 
         result_df["id"] = self.stars["id"]
-        result_df = result_df["x", "y", "z", "id"]
+        # result_df = result_df["x", "y", "z", "id"]
         visible = result_df[in_frame]
         return result_df, visible
 
@@ -102,7 +103,8 @@ class StarData:
             second_row = result_df[result_df["id"]
                                    == self.constellations[edge[0]]]
             ax.plot([first_row["x"].iloc[0], second_row["x"].iloc[0]], [
-                    first_row["y"].iloc[0], second_row["y"].iloc[0]], 'b-')
+                    first_row["y"].iloc[0], second_row["y"].iloc[0]], 'b-', color = "white")
+            
 
         self.crs = mplcursors.cursor(ax, hover=2)
 

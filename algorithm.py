@@ -69,7 +69,7 @@ def plotUserInput(user_vertices, user_edges):
 
 #TODO: Get input from UI
 user_vertices, user_edges = getUserInput()
-def findConstellation(starsx, starsy, ids, threshhold):
+def findConstellation(starsx, starsy, ids, user_vertices, user_edges, threshhold=0.5):
 
     coordinates = list(zip(starsx, starsy))
 
