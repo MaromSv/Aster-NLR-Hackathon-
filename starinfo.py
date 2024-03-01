@@ -64,8 +64,9 @@ def getvisibility(id):
 
 def getspecifics(id):
     info = {
-        'MWtype': 'unknown', 'spectraltype' : 'unknown', 'spectralsubtype' : 'unknown', 'luminosityclass' : 'unknown', 'color' : 'unknown', 
-        'temperature' : 'unknown', 'madeof' : 'unknown', 'name' : 'unknown', 'distance' : 'unknown', 'numberofstars' : 1
+        'MWtype': 'unknown', 'spectraltype' : 'unknown', 'spectralsubtype' : 'unknown', 
+        'luminosityclass' : 'unknown', 'color' : 'unknown', 'temperature' : 'unknown',
+        'madeof' : 'unknown', 'name' : 'unknown', 'distance' : 'unknown', 'numberofstars' : '1'
     }
     df = get_star_data_df()
     df_grouped = df.set_index(['id'])
@@ -78,7 +79,7 @@ def getspecifics(id):
     info['color'] = specs[0][2][0]
     info['temperature'] = specs[0][2][1]
     info['madeof'] = specs[0][2][2]
-    info['numberofstars'] = len(specs)
+    info['numberofstars'] = str(len(specs))
     name = df_grouped['name'][id]
     info['name'] = name
     distance = 3.26/(df_grouped['Parallax'][id])
@@ -87,6 +88,9 @@ def getspecifics(id):
     info['distance'] =  distance
 
     return info
+
+def printinfo(info):
+    [print(keys + ': ' + info[keys]) for keys in info]
 
 def dissectspectraltype(spectraltypefull):
     maintypeindex = 0
@@ -196,4 +200,4 @@ def romantoclass(roman):
         luminosityclass += 'a luminous supergiant'
     return luminosityclass
 
-print(getspecifics(1))
+print(printinfo(getspecifics(1)))
