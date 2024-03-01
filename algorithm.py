@@ -179,37 +179,37 @@ def findConstellation(starsx, starsy, ids, threshhold):
 
 
 
-num_points = 100
-np.random.seed(1)
-ids = np.arange(num_points)
-starsx = np.random.rand(num_points) * 10
-starsy = np.random.rand(num_points) * 10
+# num_points = 50
+# np.random.seed(1)
+# ids = np.arange(num_points)
+# starsx = np.random.rand(num_points) * 10
+# starsy = np.random.rand(num_points) * 10
 
-final_constellation_with_ids = findConstellation(starsx, starsy, ids, 1)
-final_constellation = final_constellation_with_ids[0]
-final_constellation_ids = final_constellation_with_ids[1]
+# final_constellation_with_ids = findConstellation(starsx, starsy, ids, 1)
+# final_constellation = final_constellation_with_ids[0]
+# final_constellation_ids = final_constellation_with_ids[1]
 
-print(final_constellation)
-# print(final_constellation_ids)
+# print(final_constellation)
+# # print(final_constellation_ids)
 
 
-# Split the coordinates into x and y arrays
-x_constellation = [coord[0] for coord in final_constellation]
-y_constellation = [coord[1] for coord in final_constellation]
+# # Split the coordinates into x and y arrays
+# x_constellation = [coord[0] for coord in final_constellation]
+# y_constellation = [coord[1] for coord in final_constellation]
 
-# Plot the closest match in a separate window
-plt.figure()
-plt.scatter(starsx, starsy, color='blue',
-            marker='o', label='Random Points', alpha=0.5, s=3)
-for edge in user_edges:
-    plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
-             [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
-plt.plot([x_constellation[0], x_constellation[1]], [
-         y_constellation[0], y_constellation[1]], color='black',  label='First edge')
-plt.title('Closest Match to User Shape')
-plt.xlabel('X-axis')
-plt.ylabel('Y-axis')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.grid(True)
-plt.legend()
-plt.show()
+# # Plot the closest match in a separate window
+# plt.figure()
+# plt.scatter(starsx, starsy, color='blue',
+#             marker='o', label='Random Points', alpha=0.5, s=3)
+# for edge in user_edges:
+#     plt.plot([x_constellation[edge[0]], x_constellation[edge[1]]],
+#              [y_constellation[edge[0]], y_constellation[edge[1]]], 'b-')
+# plt.plot([x_constellation[0], x_constellation[1]], [
+#          y_constellation[0], y_constellation[1]], color='black',  label='First edge')
+# plt.title('Closest Match to User Shape')
+# plt.xlabel('X-axis')
+# plt.ylabel('Y-axis')
+# plt.gca().set_aspect('equal', adjustable='box')
+# plt.grid(True)
+# plt.legend()
+# plt.show()
